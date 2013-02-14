@@ -19,6 +19,9 @@ part biosboot --fstype=biosboot --size=1
 <% else -%>
 bootloader --location=mbr --append="nofb quiet splash=quiet" <%= grub_pass %>
 <% end -%>
+<% if @host.os.name == "RedHat" -%>
+key --skip
+<% end -%>
 
 <% if @dynamic -%>
 %include /tmp/diskpart.cfg
