@@ -6,9 +6,11 @@ A place for us to colloborate around templates and snippet for various OSes
 
 Please fork and send a pull request. Thanks!
 
-Copyright (c) 2013 TheForeman Team
+# License
 
-This program and entire repository is free software: you can redistribute it and/or modify
+Copyrights are retained by their owners
+
+This entire repository is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 any later version.
