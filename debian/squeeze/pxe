@@ -1,7 +1,7 @@
 <% if @host.operatingsystem.name == "Debian" -%>
-keyboard_params = "auto=true console-keymaps-at/keymap=us keymap=us domain=#{@host.domain}"
+<% keyboard_params = "auto=true console-keymaps-at/keymap=us keymap=us domain=#{@host.domain}" -%>
 <% else -%>
-  keyboard_params = "console-setup/ask_detect=false console-setup/layout=USA console-setup/variant=USA keyboard-configuration/layoutcode=us"
+<% keyboard_params = "console-setup/ask_detect=false console-setup/layout=USA console-setup/variant=USA keyboard-configuration/layoutcode=us" -%>
 <% end -%>
 default linux
 label linux
