@@ -2,6 +2,20 @@
 
 A place for us to colloborate around templates and snippet for various OSes
 
+# Repo format
+
+So that the templates can eventually be updated automatically in Foreman, we are
+adopting a specific format for this repo. For the most part, it is simply
+
+    <operatingsystem>/<release>/<template_kind>.erb
+
+Where `template_kind` is the name Foreman gives to the template (e.g. `gPXE` or
+`finish`). The exception is snippets which are not tied to an OS:
+
+    snippets/<snippet_name>.erb
+
+Have a look around the repo for examples.
+
 # Contributing
 
 Please fork and send a pull request. Thanks!
