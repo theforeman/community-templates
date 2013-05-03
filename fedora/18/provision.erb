@@ -62,7 +62,7 @@ exec < /dev/tty3 > /dev/tty3
 (
 #update local time
 echo "updating system time"
-/usr/sbin/ntpdate -sub <%= @host.params["ntp-server"] || "ntp" %>
+/usr/sbin/ntpdate -sub <%= @host.params["ntp-server"] || "0.fedora.pool.ntp.org" %>
 /usr/sbin/hwclock --systohc
 
 # install epel if we can
