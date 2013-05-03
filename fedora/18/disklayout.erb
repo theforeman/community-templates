@@ -1,0 +1,5 @@
+zerombr
+clearpart --all --initlabel
+part /boot --fstype ext3 --size=100 --asprimary
+part /     --fstype ext3 --size=1024 --grow
+part swap  --recommended
