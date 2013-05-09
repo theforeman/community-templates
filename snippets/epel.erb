@@ -1,4 +1,4 @@
-<% if @host.operatingsystem.name == "RedHat" %>
+<% if @host.operatingsystem.family == "Redhat" and @host.operatingsystem.name !~ /fedora/i %>
 <%
   epel_url = "http://dl.fedoraproject.org/pub/epel/$major/$arch/epel-release-$os.noarch.rpm"
 
