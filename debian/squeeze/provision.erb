@@ -52,15 +52,23 @@ user-setup-udeb passwd/root-login boolean true
 d-i passwd passwd/make-user boolean false
 user-setup-udeb passwd/make-user boolean false
 
+<% if @host.params['enable-puppetlabs-rep'] == 'true' -%>
+# Puppetlabs repo
+d-i apt-setup/local1/repository string \
+    http://apt.puppetlabs.com/ <%= @host.operatingsystem.release_name %> main
+    d-i apt-setup/local1/comment string Puppetlabs packages
+    d-i apt-setup/local1/key string http://apt.puppetlabs.com/pubkey.gpg
+<% end -%>
+
 # Install minimal task set (see tasksel --task-packages minimal)
 tasksel tasksel/first multiselect minimal
 
 <% if @host.operatingsystem.name == "Ubuntu" and @host.operatingsystem.major.to_i == 10 -%>
   <% puppet_package = "puppet/lucid-backports" -%>
-  d-i apt-setup/backports boolean true
-  <% else -%>
-    <% puppet_package = "puppet" -%>
-    <% end -%>
+d-i apt-setup/backports boolean true
+<% else -%>
+  <% puppet_package = "puppet" -%>
+<% end -%>
 
 # Install some base packages
 d-i pkgsel/include string <%= puppet_package %> lsb-release openssh-server
