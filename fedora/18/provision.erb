@@ -7,11 +7,16 @@ skipx
 network --bootproto <%= @static ? "static" : "dhcp" %> --hostname <%= @host %>
 rootpw --iscrypted <%= root_pass %>
 firewall --<%= @host.operatingsystem.major.to_i >= 6 ? "service=" : "" %>ssh
-authconfig --useshadow --enablemd5
+authconfig --useshadow --passalgo=sha256 --kickstart
 timezone UTC
+services --disabled autofs,gpm,sendmail,cups,iptables,ip6tables,auditd,arptables_jf,xfs,pcmcia,isdn,rawdevices,hpoj,bluetooth,openibd,avahi-daemon,avahi-dnsconfd,hidd,hplip,pcscd,restorecond,mcstrans,rhnsd,yum-updatesd
+
 <% if @host.operatingsystem.name == "Fedora" -%>
 repo --name=fedora-everything --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=fedora-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %>
+<% elsif @host.operatingsystem.family == "Redhat" and !@host.operatingsystem.name.match(/fedora/i) %>
+repo --name="Extra Packages for Enterprise Linux" --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %>
 <% end -%>
+
 <% if @host.operatingsystem.name == "Fedora" and @host.operatingsystem.major.to_i <= 16 -%>
 # Bootloader exception for Fedora 16:
 bootloader --append="nofb quiet splash=quiet <%=ks_console%>" <%= grub_pass %>
@@ -19,24 +24,24 @@ part biosboot --fstype=biosboot --size=1
 <% else -%>
 bootloader --location=mbr --append="nofb quiet splash=quiet" <%= grub_pass %>
 <% end -%>
-<% if @host.os.name == "RedHat" -%>
-key --skip
-<% end -%>
 
 <% if @dynamic -%>
 %include /tmp/diskpart.cfg
 <% else -%>
 <%= @host.diskLayout %>
 <% end -%>
+
 text
 reboot
 
-%packages
+%packages --ignoremissing
 yum
 dhclient
 ntp
 wget
 @Core
+epel-release
+puppet
 <%= "%end\n" if @host.operatingsystem.name == "Fedora" %>
 
 <% if @dynamic -%>
@@ -65,14 +70,8 @@ echo "updating system time"
 /usr/sbin/ntpdate -sub <%= @host.params["ntp-server"] || "0.fedora.pool.ntp.org" %>
 /usr/sbin/hwclock --systohc
 
-# install epel if we can
-<%= snippet 'epel' %>
-
 # update all the base packages from the updates repository
 yum -t -y -e 0 update
-
-# and add the puppet package
-yum -t -y -e 0 install puppet
 
 echo "Configuring puppet"
 cat > /etc/puppet/puppet.conf << EOF
@@ -82,15 +81,9 @@ EOF
 # Setup puppet to run on system reboot
 /sbin/chkconfig --level 345 puppet on
 
-# Disable most things. Puppet will activate these if required.
-echo "Disabling various system services"
-<% %w{autofs gpm sendmail cups iptables ip6tables auditd arptables_jf xfs pcmcia isdn rawdevices hpoj bluetooth openibd avahi-daemon avahi-dnsconfd hidd hplip pcscd restorecond mcstrans rhnsd yum-updatesd}.each do |service| -%>
-  /sbin/chkconfig --level 345 <%= service %> off 2>/dev/null
-  <% end -%>
+/usr/bin/puppet agent --config /etc/puppet/puppet.conf -o --tags no_such_tag --server <%= @host.puppetmaster %>  --no-daemonize
 
-  /usr/bin/puppet agent --config /etc/puppet/puppet.conf -o --tags no_such_tag --server <%= @host.puppetmaster %>  --no-daemonize
-
-  sync
+sync
 
 # Inform the build system that we are done.
 echo "Informing Foreman that we are built"
