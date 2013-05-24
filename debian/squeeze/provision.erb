@@ -52,7 +52,7 @@ user-setup-udeb passwd/root-login boolean true
 d-i passwd passwd/make-user boolean false
 user-setup-udeb passwd/make-user boolean false
 
-<% if @host.params['enable-puppetlabs-rep'] == 'true' -%>
+<% if @host.params['enable-puppetlabs-rep'] && @host.params['enable-puppetlabs-rep'] == 'true' -%>
 # Puppetlabs repo
 d-i apt-setup/local1/repository string \
     http://apt.puppetlabs.com/ <%= @host.operatingsystem.release_name %> main
