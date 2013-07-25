@@ -1,1 +1,0 @@
-../squeeze/README.md

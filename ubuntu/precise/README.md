@@ -1,1 +1,0 @@
-../../debian/squeeze/README.md
