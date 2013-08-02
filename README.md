@@ -1,18 +1,24 @@
 # Community Templates
 
-A place for us to colloborate around templates and snippet for various OSes
+A place for us to colloborate around templates & snippets for various OSes
 
-# Repo format
+# Repo metadata
 
 So that the templates can eventually be updated automatically in Foreman, we are
-adopting a specific format for this repo. For the most part, it is simply
+adding metadata to the top of every template. This metadata can be read by a plugin
+(such as [foreman_templates](http://github.com/GregSutcliffe/foreman_templates)) to
+determine information abut the template. The metadata is read until the first non-comment
+line, and contains, the template name, template kind, and any appropriate OS
+associations. For example:
 
-    <operatingsystem>/<release>/<template_kind>.erb
+    #kind: provision
+    #name: My Preseed
+    #oses:
+    #- Debian 6.0
+    #- Debian 7.0
 
-Where `template_kind` is the name Foreman gives to the template (e.g. `gPXE` or
-`finish`). The exception is snippets which are not tied to an OS:
-
-    snippets/<snippet_name>.erb
+Because all the data is contained in the metadata, filenames are arbitrary, however,
+for consistency we ask that they be grouped appropriately, and end in `.erb`.
 
 Have a look around the repo for examples.
 
