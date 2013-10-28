@@ -6,7 +6,7 @@
 install
 <%= @mediapath %>
 lang en_US.UTF-8
-selinux --permissive
+selinux --enforcing
 keyboard us
 skipx
 network --bootproto <%= @static ? "static" : "dhcp" %> --hostname <%= @host %>
