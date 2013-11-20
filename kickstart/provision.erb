@@ -22,8 +22,16 @@ services --disabled autofs,gpm,sendmail,cups,iptables,ip6tables,auditd,arptables
 
 <% if @host.operatingsystem.name == "Fedora" -%>
 repo --name=fedora-everything --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=fedora-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %>
+<% if @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
+repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/fedora/f<%= @host.operatingsystem.major %>/products/<%= @host.architecture %>
+repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/fedora/f<%= @host.operatingsystem.major %>/dependencies/<%= @host.architecture %>
+<% end -%>
 <% elsif @host.operatingsystem.family == "Redhat" %>
 repo --name="Extra Packages for Enterprise Linux" --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %>
+<% if @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
+repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/products/<%= @host.architecture %>
+repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/dependencies/<%= @host.architecture %>
+<% end -%>
 <% end -%>
 
 <% if @host.operatingsystem.name == "Fedora" and @host.operatingsystem.major.to_i <= 16 -%>
@@ -51,6 +59,9 @@ wget
 @Core
 epel-release
 puppet
+<% if @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
+puppetlabs-release
+<% end -%>
 <%= "%end\n" if @host.operatingsystem.name == "Fedora" %>
 
 <% if @dynamic -%>
