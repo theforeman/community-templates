@@ -95,7 +95,7 @@ yum -t -y -e 0 update
 
 echo "Configuring puppet"
 cat > /etc/puppet/puppet.conf << EOF
-<%= snippets "puppet.conf" %>
+<%= snippet "puppet.conf" %>
 EOF
 
 # Setup puppet to run on system reboot

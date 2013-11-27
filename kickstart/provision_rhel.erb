@@ -71,7 +71,7 @@ echo "updating system time"
 /usr/sbin/ntpdate -sub <%= @host.params["ntp-server"] || "0.fedora.pool.ntp.org" %>
 /usr/sbin/hwclock --systohc
 
-<%= snippets "redhat_register" %>
+<%= snippet "redhat_register" %>
 
 # update all the base packages from the updates repository
 yum -t -y -e 0 update
@@ -81,7 +81,7 @@ yum -t -y -e 0 install puppet
 
 echo "Configuring puppet"
 cat > /etc/puppet/puppet.conf << EOF
-<%= snippets "puppet.conf" %>
+<%= snippet "puppet.conf" %>
 EOF
 
 # Setup puppet to run on system reboot

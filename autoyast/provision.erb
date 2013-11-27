@@ -76,7 +76,7 @@
         <debug config:type="boolean">true</debug>
         <source><![CDATA[
           cat > /etc/puppet/puppet.conf << EOF
-<%= snippets "puppet.conf" -%>
+<%= snippet "puppet.conf" -%>
 EOF
 if [ -f "/etc/sysconfig/puppet" ]
 then
