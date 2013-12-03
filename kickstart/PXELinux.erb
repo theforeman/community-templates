@@ -17,3 +17,4 @@ append initrd=<%= @initrd %> ks=<%= foreman_url("provision")%> ks.device=bootif 
 <% else -%>
 append initrd=<%= @initrd %> ks=<%= foreman_url("provision")%> ksdevice=bootif network kssendmac
 <% end -%>
+IPAPPEND 2
