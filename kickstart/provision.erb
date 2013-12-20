@@ -2,12 +2,18 @@
 kind: provision
 name: Community Kickstart
 oses:
+- CentOS 4
 - CentOS 5
 - CentOS 6
+- CentOS 7
 - Fedora 16
 - Fedora 17
 - Fedora 18
 - Fedora 19
+%>
+<%
+  rhel_compatible = @host.operatingsystem.family == "Redhat" && @host.operatingsystem.name != "Fedora"
+  os_major = @host.operatingsystem.major.to_i
 %>
 install
 <%= @mediapath %>
@@ -17,10 +23,12 @@ keyboard us
 skipx
 network --bootproto <%= @static ? "static --ip=#{@host.ip} --netmask=#{@host.subnet.mask} --gateway=#{@host.subnet.gateway} --nameserver=#{[@host.subnet.dns_primary,@host.subnet.dns_secondary].reject{|n| n.blank?}.join(',')}" : "dhcp" %> --hostname <%= @host %>
 rootpw --iscrypted <%= root_pass %>
-firewall --<%= @host.operatingsystem.major.to_i >= 6 ? "service=" : "" %>ssh
+firewall --<%= os_major >= 6 ? "service=" : "" %>ssh
 authconfig --useshadow --passalgo=sha256 --kickstart
 timezone UTC
+<% if rhel_compatible && os_major > 4 -%>
 services --disabled autofs,gpm,sendmail,cups,iptables,ip6tables,auditd,arptables_jf,xfs,pcmcia,isdn,rawdevices,hpoj,bluetooth,openibd,avahi-daemon,avahi-dnsconfd,hidd,hplip,pcscd,restorecond,mcstrans,rhnsd,yum-updatesd
+<% end -%>
 
 <% if @host.operatingsystem.name == "Fedora" -%>
 repo --name=fedora-everything --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=fedora-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %>
@@ -28,7 +36,7 @@ repo --name=fedora-everything --mirrorlist=https://mirrors.fedoraproject.org/met
 repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/fedora/f<%= @host.operatingsystem.major %>/products/<%= @host.architecture %>
 repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/fedora/f<%= @host.operatingsystem.major %>/dependencies/<%= @host.architecture %>
 <% end -%>
-<% elsif @host.operatingsystem.family == "Redhat" %>
+<% elsif rhel_compatible && os_major > 4 -%>
 repo --name="Extra Packages for Enterprise Linux" --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %>
 <% if @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
 repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/products/<%= @host.architecture %>
@@ -36,7 +44,7 @@ repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/el/<%= @host.ope
 <% end -%>
 <% end -%>
 
-<% if @host.operatingsystem.name == "Fedora" and @host.operatingsystem.major.to_i <= 16 -%>
+<% if @host.operatingsystem.name == "Fedora" and os_major <= 16 -%>
 # Bootloader exception for Fedora 16:
 bootloader --append="nofb quiet splash=quiet <%=ks_console%>" <%= grub_pass %>
 part biosboot --fstype=biosboot --size=1
@@ -64,11 +72,12 @@ puppet
 <% if @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
 puppetlabs-release
 <% end -%>
-<%= "%end\n" if @host.operatingsystem.name == "Fedora" %>
+%end
 
 <% if @dynamic -%>
 %pre
 <%= @host.diskLayout %>
+%end
 <% end -%>
 
 %post --nochroot
@@ -79,7 +88,7 @@ exec < /dev/tty3 > /dev/tty3
 cp -va /etc/resolv.conf /mnt/sysimage/etc/resolv.conf
 /usr/bin/chvt 1
 ) 2>&1 | tee /mnt/sysimage/root/install.postnochroot.log
-<%= "%end\n" if @host.operatingsystem.name == "Fedora" %>
+%end
 
 %post
 logger "Starting anaconda <%= @host %> postinstall"
@@ -114,4 +123,4 @@ wget -q -O /dev/null --no-check-certificate <%= foreman_url %>
 ) 2>&1 | tee /root/install.post.log
 exit 0
 
-<%= "%end\n" if @host.operatingsystem.name == "Fedora" -%>
+%end

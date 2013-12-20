@@ -2,8 +2,13 @@
 kind: provision
 name: Community Kickstart RHEL
 oses:
+- RedHat 4
 - RedHat 5
 - RedHat 6
+- RedHat 7
+%>
+<%
+  os_major = @host.operatingsystem.major.to_i
 %>
 install
 <%= @mediapath %>
@@ -13,9 +18,10 @@ keyboard us
 skipx
 network --bootproto <%= @static ? "static --ip=#{@host.ip} --netmask=#{@host.subnet.mask} --gateway=#{@host.subnet.gateway} --nameserver=#{[@host.subnet.dns_primary,@host.subnet.dns_secondary].reject{|n| n.blank?}.join(',')}" : "dhcp" %> --hostname <%= @host %>
 rootpw --iscrypted <%= root_pass %>
-firewall --<%= @host.operatingsystem.major.to_i >= 6 ? "service=" : "" %>ssh
+firewall --<%= os_major >= 6 ? "service=" : "" %>ssh
 authconfig --useshadow --passalgo=sha256 --kickstart
 timezone UTC
+<% if os_major > 4 -%>
 services --disabled autofs,gpm,sendmail,cups,iptables,ip6tables,auditd,arptables_jf,xfs,pcmcia,isdn,rawdevices,hpoj,bluetooth,openibd,avahi-daemon,avahi-dnsconfd,hidd,hplip,pcscd,restorecond,mcstrans,rhnsd,yum-updatesd
 
 repo --name="Extra Packages for Enterprise Linux" --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %>
@@ -23,9 +29,13 @@ repo --name="Extra Packages for Enterprise Linux" --mirrorlist=https://mirrors.f
 repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/products/<%= @host.architecture %>
 repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/dependencies/<%= @host.architecture %>
 <% end -%>
+<% end -%>
 
 bootloader --location=mbr --append="nofb quiet splash=quiet" <%= grub_pass %>
+<% if os_major == 5 -%>
 key --skip
+<% end -%>
+
 
 <% if @dynamic -%>
 %include /tmp/diskpart.cfg
@@ -47,10 +57,12 @@ puppet
 <% if @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
 puppetlabs-release
 <% end -%>
+%end
 
 <% if @dynamic -%>
 %pre
 <%= @host.diskLayout %>
+%end
 <% end -%>
 
 %post --nochroot
@@ -61,6 +73,7 @@ exec < /dev/tty3 > /dev/tty3
 cp -va /etc/resolv.conf /mnt/sysimage/etc/resolv.conf
 /usr/bin/chvt 1
 ) 2>&1 | tee /mnt/sysimage/root/install.postnochroot.log
+%end
 
 %post
 logger "Starting anaconda <%= @host %> postinstall"
@@ -99,3 +112,5 @@ wget -q -O /dev/null --no-check-certificate <%= foreman_url %>
 # Sleeping an hour for debug
 ) 2>&1 | tee /root/install.post.log
 exit 0
+
+%end
