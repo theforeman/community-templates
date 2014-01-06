@@ -22,6 +22,23 @@ for consistency we ask that they be grouped appropriately, and end in `.erb`.
 
 Have a look around the repo for examples.
 
+# Testing
+
+There is a test suite available in this repo that tries to render templates
+using dummy values passing the output to ksvalidator tool which can be found
+in Fedora and Red Hat repositories as part of _pykickstart_ package and in
+Ubuntu repositories as part of _python-pykickstart_ package.
+
+You will need ksvalidator from Fedora 20 or later to execute tests.
+Pykickstart can be installed from git easily too. Use '-l' option to get list
+of supported versions:
+
+    $ ksvalidator -l
+
+To start unit tests do something like:
+
+    $ ruby -Itest test/kickstart/provision_test.rb 
+
 # Contributing
 
 Please fork and send a pull request. Thanks!
