@@ -12,7 +12,7 @@ class FakeStruct
   def initialize(hash)
     hash.each do |key, value|
       singleton_class.send(:define_method, key) { value }
-    end 
+    end
   end
 
   def get_binding
@@ -69,7 +69,8 @@ module TemplatesHelper
   end
 
   def ksvalidator(version, kickstart)
-    output = `ksvalidator -v #{version} #{kickstart}`
+    ksvalidator_cmd = ENV['KSVALIDATOR'] || 'ksvalidator'
+    output = `#{ksvalidator_cmd} -v #{version} #{kickstart}`
     [$?.to_i, output]
   end
 
