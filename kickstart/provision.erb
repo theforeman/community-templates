@@ -14,6 +14,9 @@ oses:
 <%
   rhel_compatible = @host.operatingsystem.family == "Redhat" && @host.operatingsystem.name != "Fedora"
   os_major = @host.operatingsystem.major.to_i
+  # safemode renderer does not support unary negation
+  pm_set = @host.puppetmaster.empty? ? false : true
+  puppet_enabled = pm_set || @host.params['force-puppet']
 %>
 install
 <%= @mediapath %>
@@ -32,13 +35,13 @@ services --disabled autofs,gpm,sendmail,cups,iptables,ip6tables,auditd,arptables
 
 <% if @host.operatingsystem.name == "Fedora" -%>
 repo --name=fedora-everything --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=fedora-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %>
-<% if @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
+<% if puppet_enabled && @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
 repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/fedora/f<%= @host.operatingsystem.major %>/products/<%= @host.architecture %>
 repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/fedora/f<%= @host.operatingsystem.major %>/dependencies/<%= @host.architecture %>
 <% end -%>
 <% elsif rhel_compatible && os_major > 4 -%>
 repo --name="Extra Packages for Enterprise Linux" --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %>
-<% if @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
+<% if puppet_enabled && @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
 repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/products/<%= @host.architecture %>
 repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/dependencies/<%= @host.architecture %>
 <% end -%>
@@ -68,9 +71,11 @@ ntp
 wget
 @Core
 epel-release
+<% if puppet_enabled %>
 puppet
 <% if @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
 puppetlabs-release
+<% end -%>
 <% end -%>
 %end
 
@@ -104,6 +109,7 @@ echo "updating system time"
 # update all the base packages from the updates repository
 yum -t -y -e 0 update
 
+<% if puppet_enabled %>
 echo "Configuring puppet"
 cat > /etc/puppet/puppet.conf << EOF
 <%= snippet "puppet.conf" %>
@@ -112,7 +118,8 @@ EOF
 # Setup puppet to run on system reboot
 /sbin/chkconfig --level 345 puppet on
 
-/usr/bin/puppet agent --config /etc/puppet/puppet.conf -o --tags no_such_tag --server <%= @host.puppetmaster %>  --no-daemonize
+/usr/bin/puppet agent --config /etc/puppet/puppet.conf -o --tags no_such_tag <%= @host.puppetmaster.blank? ? "" : "--server #{@host.puppetmaster}" %> --no-daemonize
+<% end -%>
 
 sync
 
