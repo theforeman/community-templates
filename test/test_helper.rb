@@ -84,3 +84,9 @@ module TemplatesHelper
   end
 
 end
+
+class String
+  def blank?
+    self !~ /[^[:space:]]/
+  end
+end
