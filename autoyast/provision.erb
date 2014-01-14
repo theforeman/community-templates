@@ -88,7 +88,7 @@ name: Community AutoYaST
 EOF
 if [ -f "/etc/sysconfig/puppet" ]
 then
-/usr/bin/sed -ie s/^PUPPET_SERVER=.*/PUPPET_SERVER=<%= @host.puppetmaster.blank? ? "" : @host.puppetmaster} %>/ /etc/sysconfig/puppet
+/usr/bin/sed -ie s/^PUPPET_SERVER=.*/PUPPET_SERVER=<%= @host.puppetmaster.blank? ? "" : @host.puppetmaster %>/ /etc/sysconfig/puppet
 fi
 /usr/bin/puppet agent --config /etc/puppet/puppet.conf -o --tags no_such_tag <%= @host.puppetmaster.blank? ? "" : "--server #{@host.puppetmaster}" %> --no-daemonize
 /sbin/chkconfig puppet on -f
