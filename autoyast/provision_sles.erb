@@ -108,7 +108,7 @@ fi
   </keyboard>
   <timezone>
     <hwclock>UTC</hwclock>
-    <timezone>Etc/UTC</timezone>
+    <timezone><%= @host.params["time-zone"] || "Etc/UTC" %></timezone>
   </timezone>
   <add-on>
     <add_on_products config:type="list">

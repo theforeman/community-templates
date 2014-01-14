@@ -44,11 +44,7 @@ d-i mirror/udeb/suite string <%= @host.operatingsystem.release_name %>
 
 # Time settings
 d-i clock-setup/utc boolean true
-<% if @host.params['time-zone'] -%>
-d-i time/zone string <%= @host.params['time-zone'] %>
-<% else -%>
-d-i time/zone string UTC
-<% end -%>
+d-i time/zone string <%= @host.params["time-zone"] || "UTC" %>
 
 # NTP
 d-i clock-setup/ntp boolean true
