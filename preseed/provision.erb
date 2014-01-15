@@ -25,6 +25,16 @@ d-i console-setup/layoutcode string us
 d-i keymap select us
 <% end -%>
 
+<% if @static -%>
+# Static network configuration.
+d-i netcfg/disable_dhcp boolean true
+d-i netcfg/get_ipaddress string <%= @host.ip %>
+d-i netcfg/get_netmask string <%= @host.subnet.mask %>
+d-i netcfg/get_nameservers string <%= [@host.subnet.dns_primary,@host.subnet.dns_secondary].reject{|n| n.blank?}.join(' ') %>
+d-i netcfg/get_gateway string <%= @host.subnet.gateway %>
+d-i netcfg/confirm_static boolean true
+<% end -%>
+
 # Network configuration
 d-i netcfg/choose_interface select auto
 d-i netcfg/get_hostname string <%= @host %>
