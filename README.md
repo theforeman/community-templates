@@ -59,3 +59,10 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+## Exceptions
+
+The following file(s) are not licensed under the GPLv3+ as described above and
+instead contain copyright and license information in their headers:
+
+* ztp/provision.erb: BSD 2-clause licensed
