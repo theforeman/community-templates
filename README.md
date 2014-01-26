@@ -6,7 +6,7 @@ A place for us to colloborate around templates & snippets for various OSes
 
 So that the templates can eventually be updated automatically in Foreman, we are
 adding metadata to the top of every template. This metadata can be read by a plugin
-(such as [foreman_templates](http://github.com/GregSutcliffe/foreman_templates)) to
+(such as [foreman_templates](https://github.com/theforeman/foreman_templates)) to
 determine information abut the template. The metadata is read until the first non-comment
 line, and contains, the template name, template kind, and any appropriate OS
 associations. For example:
