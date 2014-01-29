@@ -19,13 +19,20 @@ name: redhat_register
 #
 #   subscription_manager_password = <password> (if using hosted RHN)
 #
-#   subscription_manager_host = <hostname> (hostname of SAM/Katello installation, if using SAM)
+#   subscription_manager_host = <hostname> (hostname of SAM/Katello
+#                                           installation, if using SAM)
 #
-#   subscription_manager_org = <org name> (organization name, if using SAM/Katello)
+#   subscription_manager_org = <org name> (organization name, if using
+#                                          SAM/Katello)
+#
+#   subscription_manager_repos = <repos> (comma separated list of repos (like
+#                                         rhel-6-server-optional-rpms) to
+#                                         enable after registration)
 #
 # Set this parameter regardless of which registration method you're using:
 #
-#   activation_key = <key>      (activation key string, not needed if using subscription-manager with hosted RHN)
+#   activation_key = <key>      (activation key string, not needed if using
+#                                subscription-manager with hosted RHN)
 #
 
 <% unless @host.params['subscription_manager'] %>
@@ -85,12 +92,15 @@ name: redhat_register
   <% end %>
 <% else %>
   echo "Starting the subscription-manager registration process"
-  yum -t -y -e 0 install subscription-manager
+  yum -t -y -e 0 install subscription-manager yum-utils
+  <% (enabled_repos = "yum-config-manager --enable #{@host.params['subscription_manager_repos'].gsub(',', ' ')}") if @host.params['subscription_manager_repos'] %>
   <% if @host.params['subscription_manager_username'] && @host.params['subscription_manager_password'] %>
     subscription-manager register --username="<%= @host.params['subscription_manager_username'] %>" --password="<%= @host.params['subscription_manager_password'] %>" --auto-attach
+    <%= enabled_repos if enabled_repos %>
   <% elsif @host.params['activation_key'] %>
     rpm -Uvh <%= @host.params['subscription_manager_host'] %>/pub/candlepin-cert-consumer-latest.noarch.rpm
     subscription-manager register --org="<%= @host.params['subscription_manager_org'] %>" --activationkey="<%= @host.params['activation_key'] %>"
+    <%= enabled_repos if enabled_repos %>
   <% else %>
     # Not registering host.params['activation_key'] not found.
   <% end %>
