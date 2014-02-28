@@ -44,6 +44,12 @@ class FakeNamespace
       :params => {
         "enable-puppetlabs-repo" => "true"
       },
+      :otp => "onetimepassword",
+      :realm => FakeStruct.new(
+        :name => "EXAMPLE.COM",
+        :realm_type => "FreeIPA",
+        :as_string  => "EXAMPLE.COM"
+      ),
       :as_string => name
     )
   end
