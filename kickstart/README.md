@@ -7,5 +7,6 @@ Fedora 16
 Fedora 17
 Fedora 18
 Fedora 19
+Fedora 20
 RHEL, CentOS 5.9
 RHEL, CentOS 6.3
