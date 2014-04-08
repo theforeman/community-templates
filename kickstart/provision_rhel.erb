@@ -25,7 +25,7 @@ firewall --<%= os_major >= 6 ? 'service=' : '' %>ssh
 authconfig --useshadow --passalgo=sha256 --kickstart
 timezone <%= @host.params['time-zone'] || 'UTC' %>
 
-<% if os_major >= 7 && @host.otp && @host.realm -%>
+<% if os_major >= 7 && @host.respond_to?(:otp) && @host.otp && @host.realm -%>
 realm join --one-time-password=<%= @host.otp %> <%= @host.realm %>
 <% end -%>
 
