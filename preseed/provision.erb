@@ -12,6 +12,7 @@ oses:
   # safemode renderer does not support unary negation
   pm_set = @host.puppetmaster.empty? ? false : true
   puppet_enabled = pm_set || @host.params['force-puppet']
+  salt_enabled = @host.params['salt_master'].empty? ? false : true
 %>
 # Locale, country and keyboard settings
 d-i debian-installer/locale string en_US
@@ -90,6 +91,15 @@ d-i apt-setup/local1/source boolean true
 d-i apt-setup/local1/key string http://apt.puppetlabs.com/pubkey.gpg
 <% end -%>
 
+<% if salt_enabled and @host.operatingsystem.name == 'Debian' && @host.operatingsystem.major.to_i >= 6 -%>
+  <% salt_package = 'salt-minion' -%>
+d-i apt-setup/local0/repository string http://debian.saltstack.com/debian <%= @host.operatingsystem.release_name %>-saltstack main
+d-i apt-setup/local0/comment string SaltStack Repository
+d-i apt-setup/local0/key string http://debian.saltstack.com/debian-salt-team-joehealy.gpg.key
+<% else -%>
+  <% salt_package = '' -%>
+<% end -%>
+
 # Install minimal task set (see tasksel --task-packages minimal)
 tasksel tasksel/first multiselect minimal
 
@@ -105,7 +115,7 @@ d-i apt-setup/backports boolean true
 <% end -%>
 
 # Install some base packages
-d-i pkgsel/include string <%= puppet_package %> lsb-release openssh-server
+d-i pkgsel/include string <%= puppet_package %> <%= salt_package %> lsb-release openssh-server
 d-i pkgsel/update-policy select unattended-upgrades
 
 popularity-contest popularity-contest/participate boolean false

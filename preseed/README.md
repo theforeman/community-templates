@@ -1,6 +1,6 @@
 # Templates
 
-tested on:
+Tested on:
 
 * Ubuntu 10.04 (lucid)
 * Ubuntu 12.04 (precise)
@@ -14,3 +14,5 @@ The templates use some Host Parameters to contol the flow of the template. These
 
 * install-disk: What device to install to (default: /dev/sda | /dev/vda)
 * enable-puppetlabs-repo: Add the Puppet Labs APT repo to the APT sources during install (default: no)
+* salt_master: SaltStack Master (default: empty)
+* salt_grains: Salt client specific information, like facter (default: empty)
