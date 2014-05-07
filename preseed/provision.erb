@@ -76,28 +76,42 @@ user-setup-udeb passwd/root-login boolean true
 d-i passwd passwd/make-user boolean false
 user-setup-udeb passwd/make-user boolean false
 
+<% repos = 0 %>
 <% if puppet_enabled && @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
 # Puppetlabs products
-d-i apt-setup/local0/repository string \
+d-i apt-setup/local<%= repos %>/repository string \
       http://apt.puppetlabs.com <%= @host.operatingsystem.release_name %> main
-d-i apt-setup/local0/comment string Puppetlabs products
-d-i apt-setup/local0/source boolean true
-d-i apt-setup/local0/key string http://apt.puppetlabs.com/pubkey.gpg
+d-i apt-setup/local<%= repos %>/comment string Puppetlabs products
+d-i apt-setup/local<%= repos %>/source boolean true
+d-i apt-setup/local<%= repos %>/key string http://apt.puppetlabs.com/pubkey.gpg
+<% repos += 1 -%>
 # Puppetlabs dependencies
-d-i apt-setup/local1/repository string \
+d-i apt-setup/local<%= repos %>/repository string \
       http://apt.puppetlabs.com <%= @host.operatingsystem.release_name %> dependencies
-d-i apt-setup/local1/comment string Puppetlabs dependencies
-d-i apt-setup/local1/source boolean true
-d-i apt-setup/local1/key string http://apt.puppetlabs.com/pubkey.gpg
+d-i apt-setup/local<%= repos %>/comment string Puppetlabs dependencies
+d-i apt-setup/local<%= repos %>/source boolean true
+d-i apt-setup/local<%= repos %>/key string http://apt.puppetlabs.com/pubkey.gpg
+<% repos += 1 -%>
 <% end -%>
 
-<% if salt_enabled and @host.operatingsystem.name == 'Debian' && @host.operatingsystem.major.to_i >= 6 -%>
-  <% salt_package = 'salt-minion' -%>
-d-i apt-setup/local0/repository string http://debian.saltstack.com/debian <%= @host.operatingsystem.release_name %>-saltstack main
-d-i apt-setup/local0/comment string SaltStack Repository
-d-i apt-setup/local0/key string http://debian.saltstack.com/debian-salt-team-joehealy.gpg.key
+<% if salt_enabled -%>
+<% salt_package = 'salt-minion' -%>
+<% if @host.params['enable-saltstack-repo'] && @host.params['enable-saltstack-repo'] == 'true' -%>
+<% if @host.operatingsystem.name == 'Debian' -%>
+d-i apt-setup/local<%= repos %>/repository string http://debian.saltstack.com/debian <%= @host.operatingsystem.release_name %>-saltstack main
+d-i apt-setup/local<%= repos %>/comment string SaltStack Repository
+d-i apt-setup/local<%= repos %>/key string http://debian.saltstack.com/debian-salt-team-joehealy.gpg.key
+<% repos += 1 -%>
+<% end -%>
+<% if @host.operatingsystem.name == 'Ubuntu' -%>
+d-i apt-setup/local<%= repos %>/repository string http://ppa.launchpad.net/saltstack/salt/ubuntu <%= @host.operatingsystem.release_name %> main
+d-i apt-setup/local<%= repos %>/comment string SaltStack Repository
+d-i apt-setup/local<%= repos %>/key string http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x4759FA960E27C0A6
+<% repos += 1 -%>
+<% end -%>
+<% end -%>
 <% else -%>
-  <% salt_package = '' -%>
+<% salt_package = '' -%>
 <% end -%>
 
 # Install minimal task set (see tasksel --task-packages minimal)

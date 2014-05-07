@@ -14,5 +14,6 @@ The templates use some Host Parameters to contol the flow of the template. These
 
 * install-disk: What device to install to (default: /dev/sda | /dev/vda)
 * enable-puppetlabs-repo: Add the Puppet Labs APT repo to the APT sources during install (default: no)
+* enable-saltstack-repo: Add the SaltStack APT repo to the APT sources during install (default: no)
 * salt_master: SaltStack Master (default: empty)
 * salt_grains: Salt client specific information, like facter (default: empty)
