@@ -24,13 +24,17 @@ name: freeipa_register
 #
 #   freeipa_opts                Additional options to pass directly to installer
 #
-<% if @host.operatingsystem.name == "Fedora" -%>
-freeipa_client=freeipa-client
+<% if @host.operatingsystem.family == 'Redhat' -%>
+  <% if @host.opearatingsystem.name == "Fedora" -%>
+    freeipa_client=freeipa-client
+  <% else -%>
+    freeipa_client=ipa-client
+  <% end -%>
 <% else -%>
-freeipa_client=ipa-client
+  freeipa_client=freeipa-client
 <% end -%>
 
-yum -y install $freeipa_client libsss_sudo
+<%= @host.operatingsystem.family == "RedHat" ? 'yum install -y libsss_sudo' : 'apt-get install -y libsss-sudo' %> $freeipa_client
 
 ##
 ## IPA Client Installation
@@ -79,12 +83,12 @@ freeipa_realm=$(grep default_realm /etc/krb5.conf | cut -d"=" -f2 | tr -d ' ')
 freeipa_domain=$(grep default_domain /etc/krb5.conf | cut -d"=" -f2 | tr -d ' ')
 freeipa_dn=$(for word in $(echo $freeipa_domain | sed 's/\./ /g'); do echo -n dc=$word,; done)
 
-sssd_version=$(rpm -q --queryformat '%{VERSION}' sssd)
+sssd_version=$(sssd --version)
 sssd_major=$(echo $sssd_version | cut -f1 -d.)
 sssd_minor=$(echo $sssd_version | cut -f2 -d.)
 LDAP_CONFIG=$(mktemp)
 
-if [[ $sssd_minor -ge 11 || $sssd_major -gt 1 ]];
+if [ $sssd_minor >= 11 ] || [ $sssd_major > 1 ]
 then
     echo "sudo_provider = ipa" > $LDAP_CONFIG
 else
@@ -92,7 +96,7 @@ else
     ldap_uri=", ldap://<%= @host.params["freeipa_server"] %>"
     krb5_server=<%= @host.params["freeipa_server"] %>
     <% else -%>
-    krb5_server=$(host -t SRV _kerberos._tcp.${freeipa_domain} | grep SRV | awk '{print $(NF)}' | sed 's/\.$//' | head -n1)
+    krb5_server="_srv_"
     <% end -%>
 
 cat <<EOF > $LDAP_CONFIG
@@ -110,14 +114,22 @@ fi
 sed -i -e "/\[domain\/.*\]/ r $LDAP_CONFIG" /etc/sssd/sssd.conf
 sed -i -e "s/services = .*/\0, sudo/" /etc/sssd/sssd.conf
 
-authconfig --nisdomain ${freeipa_domain} --update
+<% if @host.operatingsystem.family == 'RedHat' -%>
+  authconfig --nisdomain ${freeipa_domain} --update
+  chkconfig sssd on
 
-if [[ $(rpm -qa systemd | wc -l) -gt 0 ]];
-then
-  domain_service=`ls /usr/lib/systemd/system/*-domainname.service | rev | cut -d'/' -f 1 | rev`
-  systemctl start $domain_service
-  systemctl enable $domain_service
-fi
+  if [[ $(rpm -qa systemd | wc -l) -gt 0 ]];
+  then
+    domain_service=`ls /usr/lib/systemd/system/*-domainname.service | rev | cut -d'/' -f 1 | rev`
+    systemctl start $domain_service
+    systemctl enable $domain_service
+  fi
+<% else -%>
+  sed -i -e '/^exit /d' /etc/rc.local
+  echo "nisdomainname ${freeipa_domain}" >> /etc/rc.local
+  echo "exit 0" >> /etc/rc.local
+  nisdomainname ${freeipa_domain}
+<% end -%>
 
 grep -q sudoers /etc/nsswitch.conf
 if [[ $? -eq 0 ]];
@@ -126,7 +138,5 @@ then
 else
   echo sudoers:    files sss >> /etc/nsswitch.conf
 fi
-
-chkconfig sssd on
-
 <% end -%>
+
