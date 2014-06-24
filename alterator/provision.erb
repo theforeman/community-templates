@@ -1,6 +1,6 @@
-<% if @metadata.to_s == 'vm-profile.scm' -%>
+<% if @metadata.to_s == '/vm-profile.scm' -%>
 <%= @host.diskLayout %>
-<% elsif @metadata.to_s == 'pkg-groups.tar' -%>
+<% elsif @metadata.to_s == '/pkg-groups.tar' -%>
 <%= snippets "alterator_pkglist" %>
 <% else -%>
 ("/sysconfig-base/language" action "write" lang ("en_US"))
