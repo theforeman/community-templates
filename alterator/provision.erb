@@ -1,3 +1,10 @@
+<%#
+kind: provision
+name: Alterator default
+oses:
+- ALTLinux p6
+- ALTLinux p7
+-%>
 <% if @metadata.to_s == '/vm-profile.scm' -%>
 <%= @host.diskLayout %>
 <% elsif @metadata.to_s == '/pkg-groups.tar' -%>

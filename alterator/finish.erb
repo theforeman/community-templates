@@ -1,3 +1,10 @@
+<%#
+kind: finish
+name: Alterator default finish
+oses:
+- ALTLinux p6
+- ALTLinux p7
+-%>
 #!/bin/sh
 
 <%= snippet 'fix_hosts' %>
@@ -15,4 +22,3 @@ EOF
 /sbin/chkconfig puppetd on
 
 exit 0
-
