@@ -34,7 +34,7 @@ name: freeipa_register
   freeipa_client=freeipa-client
 <% end -%>
 
-<%= @host.operatingsystem.family == "RedHat" ? 'yum install -y libsss_sudo' : 'apt-get install -y libsss-sudo' %> $freeipa_client
+<%= @host.operatingsystem.family == "Redhat" ? 'yum install -y libsss_sudo' : 'apt-get install -y libsss-sudo' %> $freeipa_client
 
 ##
 ## IPA Client Installation
@@ -114,7 +114,7 @@ fi
 sed -i -e "/\[domain\/.*\]/ r $LDAP_CONFIG" /etc/sssd/sssd.conf
 sed -i -e "s/services = .*/\0, sudo/" /etc/sssd/sssd.conf
 
-<% if @host.operatingsystem.family == 'RedHat' -%>
+<% if @host.operatingsystem.family == 'Redhat' -%>
   authconfig --nisdomain ${freeipa_domain} --update
   chkconfig sssd on
 
