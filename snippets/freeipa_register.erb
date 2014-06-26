@@ -25,7 +25,7 @@ name: freeipa_register
 #   freeipa_opts                Additional options to pass directly to installer
 #
 <% if @host.operatingsystem.family == 'Redhat' -%>
-  <% if @host.opearatingsystem.name == "Fedora" -%>
+  <% if @host.operatingsystem.name == "Fedora" -%>
     freeipa_client=freeipa-client
   <% else -%>
     freeipa_client=ipa-client
