@@ -4,17 +4,16 @@ name: Alterator default PXELinux
 oses:
 - ALTLinux p6
 - ALTLinux p7
-
-This template will not function with Safemode set to true.
-    Please disable it in Settings > Provisioning
 -%>
-
+<%#
+  This template will not function with Safemode set to true.
+    Please disable it in Settings > Provisioning
+%>
 <%
     metadata    = @host.token.nil? ? '?metadata=' : '&metadata='
     os          = @host.operatingsystem
     mediumpath  = os.mediumpath @host
 -%>
-
 default linux
 label linux
 kernel <%= @kernel %>
