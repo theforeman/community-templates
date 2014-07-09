@@ -122,6 +122,7 @@ rm /etc/resolv.conf
   </timezone>
   <add-on>
     <add_on_products config:type="list">
+<% if puppet_enabled %>
       <listentry>
 <!-- you have to update the next line with the actual URL of your SDK -->
         <media_url>http://<your_server_here>/iso/suse/SDK/<%= @host.operatingsystem.major %>.<%= @host.operatingsystem.minor %>/<%= @host.architecture %>/</media_url>
@@ -129,7 +130,6 @@ rm /etc/resolv.conf
         <product_dir>/</product_dir>
         <name>SuSE-Linux-SDK</name>
       </listentry>
-<% if puppet_enabled %>
       <listentry>
         <media_url><![CDATA[http://download.opensuse.org/repositories/systemsmanagement:/puppet/SLE_<%= @host.operatingsystem.major %>_SP<%= @host.operatingsystem.minor %>/]]></media_url>
         <name>systemsmanagement_puppet</name>
