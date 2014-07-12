@@ -8,7 +8,7 @@ oses:
   # safemode renderer does not support unary negation
   pm_set = @host.puppetmaster.empty? ? false : true
   puppet_enabled = pm_set || @host.params['force-puppet']
-  salt_enabled = @host.params['salt_master'].empty? ? false : true
+  salt_enabled = @host.params['salt_master'] ? true : false
 %>
 /bin/echo '<%= root_pass %>' | pw usermod root -H 0
 cat >> /etc/rc.conf <<EOF

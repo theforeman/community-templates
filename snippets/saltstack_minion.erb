@@ -14,4 +14,4 @@ log_level: warning
 # * {'roles': ['webserver', 'frontend']}
 #
 %>
-grains: <%= @host.params['salt_grains'].nil? ? '{}' : @host.params['salt_grains'] %>
+grains: <%= @host.params['salt_grains'] ? @host.params['salt_grains'] : '{}' %>
