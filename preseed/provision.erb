@@ -11,6 +11,7 @@ oses:
 <%
   # safemode renderer does not support unary negation
   pm_set = @host.puppetmaster.empty? ? false : true
+  proxy_string = @host.params['http-proxy'] ? " http://#{@host.params['http-proxy']}:#{@host.params['http-proxy-port']}" : ''
   puppet_enabled = pm_set || @host.params['force-puppet']
   salt_enabled = @host.params['salt_master'] ? true : false
 %>
@@ -48,7 +49,7 @@ d-i hw-detect/load_firmware boolean true
 d-i mirror/country string manual
 d-i mirror/http/hostname string <%= @preseed_server %>
 d-i mirror/http/directory string <%= @preseed_path %>
-d-i mirror/http/proxy string
+d-i mirror/http/proxy string<%= proxy_string %>
 d-i mirror/codename string <%= @host.operatingsystem.release_name %>
 d-i mirror/suite string <%= @host.operatingsystem.release_name %>
 d-i mirror/udeb/suite string <%= @host.operatingsystem.release_name %>
@@ -142,4 +143,4 @@ d-i grub-installer/with_other_os boolean true
 
 d-i finish-install/reboot_in_progress note
 
-d-i preseed/late_command string wget <%= foreman_url('finish') %> -O /target/tmp/finish.sh && in-target chmod +x /tmp/finish.sh && in-target /tmp/finish.sh
+d-i preseed/late_command string wget -Y off <%= foreman_url('finish') %> -O /target/tmp/finish.sh && in-target chmod +x /tmp/finish.sh && in-target /tmp/finish.sh

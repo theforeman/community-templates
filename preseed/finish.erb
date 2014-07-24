@@ -37,4 +37,4 @@ cat > /etc/salt/minion << EOF
 EOF
 <% end -%>
 
-/usr/bin/wget --quiet --output-document=/dev/null --no-check-certificate <%= foreman_url %>
+/usr/bin/wget --no-proxy --quiet --output-document=/dev/null --no-check-certificate <%= foreman_url %>

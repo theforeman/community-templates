@@ -11,11 +11,12 @@ oses:
   os_major = @host.operatingsystem.major.to_i
   # safemode renderer does not support unary negation
   pm_set = @host.puppetmaster.empty? ? false : true
+  proxy_string = @host.params['http-proxy'] ? " --proxy=http://#{@host.params['http-proxy']}:#{@host.params['http-proxy-port']}" : ''
   puppet_enabled = pm_set || @host.params['force-puppet']
   section_end = os_major <= 5 ? '' : '%end'
 %>
 install
-<%= @mediapath %>
+<%= @mediapath %><%= proxy_string %>
 lang en_US.UTF-8
 selinux --enforcing
 keyboard us
@@ -33,10 +34,10 @@ realm join --one-time-password=<%= @host.otp %> <%= @host.realm %>
 <% if os_major > 4 -%>
 services --disabled gpm,sendmail,cups,pcmcia,isdn,rawdevices,hpoj,bluetooth,openibd,avahi-daemon,avahi-dnsconfd,hidd,hplip,pcscd
 
-repo --name="EPEL" --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %>
+repo --name="EPEL" --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %><%= proxy_string %>
 <% if puppet_enabled && @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
-repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/products/<%= @host.architecture %>
-repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/dependencies/<%= @host.architecture %>
+repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/products/<%= @host.architecture %><%= proxy_string %>
+repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/dependencies/<%= @host.architecture %><%= proxy_string %>
 <% end -%>
 <% end -%>
 
