@@ -20,6 +20,7 @@ oses:
   pm_set = @host.puppetmaster.empty? ? false : true
   proxy_string = @host.params['http-proxy'] ? " --proxy=http://#{@host.params['http-proxy']}:#{@host.params['http-proxy-port']}" : ''
   puppet_enabled = pm_set || @host.params['force-puppet']
+  salt_enabled = @host.params['salt_master'] ? true : false
   section_end = (rhel_compatible && os_major <= 5) ? '' : '%end'
 %>
 install
@@ -85,6 +86,9 @@ puppet
 puppetlabs-release
 <% end -%>
 <% end -%>
+<% if salt_enabled %>
+salt-minion
+<% end -%>
 <%= section_end -%>
 
 <% if @dynamic -%>
@@ -131,6 +135,14 @@ EOF
 /sbin/chkconfig --level 345 puppet on
 
 /usr/bin/puppet agent --config /etc/puppet/puppet.conf -o --tags no_such_tag <%= @host.puppetmaster.blank? ? '' : "--server #{@host.puppetmaster}" %> --no-daemonize
+<% end -%>
+
+<% if salt_enabled %>
+cat > /etc/salt/minion << EOF
+<%= snippet 'saltstack_minion' %>
+EOF
+# Setup salt-minion to run on system reboot
+/sbin/chkconfig --level 345 salt-minion on
 <% end -%>
 
 sync
