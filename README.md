@@ -15,7 +15,7 @@ associations. For example:
     #name: My Preseed
     #oses:
     #- Debian 6.0
-    #- Debian 7.0
+    #- Debian 7.
 
 Because all the data is contained in the metadata, filenames are arbitrary, however,
 for consistency we ask that they be grouped appropriately, and end in `.erb`.
