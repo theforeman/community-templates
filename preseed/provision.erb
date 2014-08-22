@@ -16,7 +16,7 @@ oses:
   salt_enabled = @host.params['salt_master'] ? true : false
 %>
 # Locale, country and keyboard settings
-d-i debian-installer/locale string en_US
+d-i debian-installer/locale string <%= @host.params['lang'] || 'en_US' %>
 d-i console-setup/ask_detect boolean false
 d-i console-setup/modelcode string pc105
 d-i console-setup/variant USA

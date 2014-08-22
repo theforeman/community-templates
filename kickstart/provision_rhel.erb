@@ -18,7 +18,7 @@ oses:
 %>
 install
 <%= @mediapath %><%= proxy_string %>
-lang en_US.UTF-8
+lang <%= @host.params['lang'] || 'en_US.UTF-8' %>
 selinux --enforcing
 keyboard us
 skipx
