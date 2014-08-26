@@ -53,7 +53,11 @@ class FakeNamespace
         :realm_type => 'FreeIPA',
         :as_string  => 'EXAMPLE.COM'
       ),
-      :as_string => name
+      :as_string => name,
+      :subnet => FakeStruct.new(
+        :dhcp_boot_mode? => true
+      ),
+      :mac => '00:00:00:00:00:01'
     )
   end
 
