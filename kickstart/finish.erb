@@ -54,7 +54,9 @@ EOF
 
 # Setup puppet to run on system reboot
 <% if @host.operatingsystem.name == 'Fedora' -%>
-/usr/bin/systemctl enable puppetagent
+puppet_unit=puppet
+/usr/bin/systemctl list-unit-files | grep -q puppetagent && puppet_unit=puppetagent
+/usr/bin/systemctl enable ${puppet_unit}
 <% else -%>
 /sbin/chkconfig --level 345 puppet on
 <% end -%>
