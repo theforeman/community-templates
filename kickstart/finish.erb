@@ -52,8 +52,11 @@ cat > /etc/puppet/puppet.conf << EOF
 <%= snippet 'puppet.conf' %>
 EOF
 
-# Setup puppet to run on system reboot
+<% if @host.operatingsystem.name == 'Fedora' -%>
+/usr/bin/systemctl enable puppetagent
+<% else -%>
 /sbin/chkconfig --level 345 puppet on
+<% end -%>
 
 /usr/bin/puppet agent --config /etc/puppet/puppet.conf -o --tags no_such_tag <%= @host.puppetmaster.blank? ? '' : "--server #{@host.puppetmaster}" %> --no-daemonize
 <% end -%>
