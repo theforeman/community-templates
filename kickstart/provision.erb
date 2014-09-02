@@ -79,7 +79,9 @@ dhclient
 ntp
 wget
 @Core
+<% if rhel_compatible && os_major > 4 -%>
 epel-release
+<% end -%>
 <% if puppet_enabled %>
 puppet
 <% if @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
