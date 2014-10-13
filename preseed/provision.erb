@@ -17,7 +17,11 @@ oses:
 %>
 # Locale
 d-i debian-installer/locale string <%= @host.params['lang'] || 'en_US' %>
-# country and keyboard settings are automatic
+# country and keyboard settings are automatic. Keep them ...
+# ... for wheezy and newer:
+d-i keyboard-configuration/xkb-keymap seen true
+# ... for squeeze and older:
+d-i console-keymaps-at/keymap seen true
 
 <% if @static -%>
 # Static network configuration.
