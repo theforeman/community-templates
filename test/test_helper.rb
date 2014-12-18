@@ -27,9 +27,9 @@ end
 class FakeNamespace
   attr_reader :root_pass, :grub_pass
   def initialize(family, name, major, minor)
-    @mediapath = "url --url http://localhost/repo/xyz"
+    @mediapath = 'url --url http://localhost/repo/xyz'
     @root_pass = '$1$redhat$9yxjZID8FYVlQzHGhasqW/'
-    @grub_pass = "blah"
+    @grub_pass = 'blah'
     @host = FakeStruct.new(
       :operatingsystem => FakeStruct.new(
         :name => name,
@@ -38,35 +38,35 @@ class FakeNamespace
         :minor => minor,
         :as_string => name
       ),
-      :architecture => "x86_64",
+      :architecture => 'x86_64',
       :diskLayout => DISKLAYOUT,
-      :puppetmaster => "http://localhost",
+      :puppetmaster => 'http://localhost',
       :params => {
-        "enable-puppetlabs-repo" => "true"
+        'enable-puppetlabs-repo' => 'true'
       },
       :info => { 
-        "parameters" => { "realm" => "EXAMPLE.COM" }
+        'parameters' => { 'realm' => 'EXAMPLE.COM' }
       },
-      :otp => "onetimepassword",
+      :otp => 'onetimepassword',
       :realm => FakeStruct.new(
-        :name => "EXAMPLE.COM",
-        :realm_type => "FreeIPA",
-        :as_string  => "EXAMPLE.COM"
+        :name => 'EXAMPLE.COM',
+        :realm_type => 'FreeIPA',
+        :as_string  => 'EXAMPLE.COM'
       ),
       :as_string => name
     )
   end
 
   def snippet(*args)
-    ""
+    ''
   end
 
   def ks_console(*args)
-    "console=ttyS99"
+    'console=ttyS99'
   end
 
   def foreman_url(*args)
-    "http://localhost"
+    'http://localhost'
   end
 end
 
@@ -84,7 +84,7 @@ module TemplatesHelper
   end
 
   def validate_erb(template, namespace, ksversion)
-    t = Tempfile.new("community-templates-validate")
+    t = Tempfile.new('community-templates-validate')
     t.write(render_erb(template, namespace))
     t.close
     ksvalidator(ksversion, t.path)
