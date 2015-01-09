@@ -63,6 +63,9 @@ dhclient
 ntp
 wget
 @Core
+<% if os_major >= 6 -%>
+redhat-lsb-core
+<% end -%>
 epel-release
 <% if puppet_enabled && @host.params['enable-puppetlabs-repo'] && @host.params['enable-puppetlabs-repo'] == 'true' -%>
 puppetlabs-release
