@@ -5,8 +5,10 @@ Tested on:
 * Ubuntu 10.04 (lucid)
 * Ubuntu 12.04 (precise)
 * Ubuntu 13.04 (raring)
+* Ubuntu 14.04 (trusty)
 * Debian 6.0 (Squeeze)
 * Debian 7 (Wheezy)
+* Debian 8 (Jessie)
 
 # Host Parameters
 
