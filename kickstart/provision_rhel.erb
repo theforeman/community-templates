@@ -18,6 +18,7 @@ This template accepts the following parameters:
 - enable-puppetlabs-repo: boolean (default=false)
 - salt_master: string (default=undef)
 - ntp-server: string (default="0.fedora.pool.ntp.org")
+- bootloader-append: string (default="nofb quiet splash=quiet")
 %>
 <%
   os_major = @host.operatingsystem.major.to_i
@@ -63,7 +64,7 @@ repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/el/<%= @host.ope
 <% end -%>
 <% end -%>
 
-bootloader --location=mbr --append="nofb quiet splash=quiet" <%= grub_pass %>
+bootloader --location=mbr --append="<%= @host.params['bootloader-append'] || 'nofb quiet splash=quiet' %>" <%= grub_pass %>
 <% if os_major == 5 -%>
 key --skip
 <% end -%>
