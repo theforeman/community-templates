@@ -10,6 +10,7 @@ oses:
 <%#
 This template accepts the following parameters:
 - lang: string (default="en_US.UTF-8")
+- selinux: string (default="enforcing")
 - keyboard: string (default="us")
 - time-zone: string (default="UTC")
 - http-proxy: string (default="")
@@ -33,7 +34,7 @@ This template accepts the following parameters:
 install
 <%= @mediapath %><%= proxy_string %>
 lang <%= @host.params['lang'] || 'en_US.UTF-8' %>
-selinux --enforcing
+selinux --<%= @host.params['selinux'] || 'enforcing' %>
 keyboard <%= @host.params['keyboard'] || 'us' %>
 skipx
 
