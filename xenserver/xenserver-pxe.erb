@@ -1,0 +1,5 @@
+default xenserver
+label xenserver
+kernel mboot.c32
+append boot/XenServer-6.5-x86_64-xen.gz dom0_max_vcpus=16 dom0_mem=752M com1=115200,8n1 console=com1,vga --- boot/XenServer-6.5-x86_64-vmlinuz xencons=hvc console=hvc0 console=tty0 answerfile=<%= foreman_url('provision')%> install --- boot/XenServer-6.5-x86_64-initrd.img
+IPAPPEND 2

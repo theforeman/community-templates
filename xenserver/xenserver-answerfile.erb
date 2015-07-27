@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+  <installation mode="fresh" srtype="lvm">
+    <primary-disk gueststorage="<%= @host.params['gueststorage'] || 'yes' %>"><%= @host.params['primary-disk'] || 'sda' %></primary-disk>
+    <keymap>de</keymap>
+    <hostname><%= @host.shortname %></hostname>
+    <root-password type="hash"><%= root_pass %></root-password>
+    <source type="<%= @host.params['source-type'] %>"><%= @host.params['source-path'] %></source>
+    <admin-interface name="<%=@ host.primary_interface || 'eth0' %>" proto="static">
+      <ip><%= @host.ip %></ip>
+      <subnet-mask><%= @host.subnet.mask %></subnet-mask>
+      <gateway><%= @host.subnet.gateway %></gateway>
+    </admin-interface>
+    <name-server><%= @host.subnet.dns_primary %></name-server>
+    <name-server><%= @host.subnet.dns_secondary  %></name-server>
+    <ntp-server>pool.ntp.org</ntp-server>
+    <timezone>Europe/Berlin</timezone>
+    <time-config-method>ntp</time-config-method>
+    <script stage="installation-complete" type="url">
+      <%= foreman_url('finish') %>
+    </script>
+  </installation>
