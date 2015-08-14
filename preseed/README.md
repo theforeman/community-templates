@@ -14,8 +14,15 @@ Tested on:
 
 The templates use some Host Parameters to contol the flow of the template. These are:
 
-* install-disk: What device to install to (default: /dev/sda | /dev/vda)
-* enable-puppetlabs-repo: Add the Puppet Labs APT repo to the APT sources during install (default: no)
-* enable-saltstack-repo: Add the SaltStack APT repo to the APT sources during install (default: no)
-* salt_master: SaltStack Master (default: empty)
-* salt_grains: Salt client specific information, like facter (default: empty)
+* `install-disk`: What device to install to (default: `/dev/sda /dev/vda /dev/xvda`, the first available is picked)
+* `partitioning-method`: `regular` (default for `Preseed default`), `lvm` (default for `Preseed default lvm`) or `crypto`
+* `partitioning-recipe`: `atomic` (default for `Preseed default`), `home`, or `multi` (default for `Preseed default lvm`)
+* `partitioning-expert-recipe`: Entire recipe (default: empty, i.e `partitioning-recipe`)
+* `partitioning-vg-name`: LVM volume group name (default: `vg01` for `Preseed default lvm`)
+* `partitioning-filesystem`: One of `ext4`, `ext4`, `btrfs`, ... (default: empty, the default is used)
+* `enable-puppetlabs-repo`: Add the Puppet Labs APT repo to the APT sources during install (default: `false`)
+* `enable-saltstack-repo`: Add the SaltStack APT repo to the APT sources during install (default: `false`)
+* `salt_master`: SaltStack Master (default: empty)
+* `salt_grains`: Salt client specific information, like facter (default: empty)
+
+Detailed description is available at https://www.debian.org/releases/stable/amd64/apbs04.html.en
