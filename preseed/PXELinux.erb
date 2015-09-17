@@ -32,7 +32,7 @@ oses:
   else
     options << 'console-setup/ask_detect=false console-setup/layout=USA console-setup/variant=USA keyboard-configuration/layoutcode=us localechooser/translation/warn-light=true localechooser/translation/warn-severe=true'
   end
-  options << (@host.params['lang'] || 'en_US')
+  options << "locale=#{@host.params['lang'] || 'en_US'}"
   options = options.join(' ')
 -%>
 
