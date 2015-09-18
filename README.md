@@ -11,11 +11,12 @@ determine information abut the template. The metadata is read until the first no
 line, and contains, the template name, template kind, and any appropriate OS
 associations. For example:
 
-    #kind: provision
-    #name: My Preseed
+    #kind: user_data
+    #name: My Userdata
     #oses:
-    #- Debian 6.0
-    #- Debian 7.
+    # - CentOS 7
+    # - Debian
+    # - Ubuntu
 
 Because all the data is contained in the metadata, filenames are arbitrary, however,
 for consistency we ask that they be grouped appropriately, and end in `.erb`.
