@@ -15,9 +15,9 @@ oses:
 
 <% subnet = @host.subnet -%>
 <% if subnet.respond_to?(:dhcp_boot_mode?) -%>
-  <% dhcp = subnet.dhcp_boot_mode? && !@static -%>
+<% dhcp = subnet.dhcp_boot_mode? && !@static -%>
 <% else -%>
-  <% dhcp = !@static -%>
+<% dhcp = !@static -%>
 <% end -%>
 <% unless dhcp -%>
 # host and domain name need setting as these values may have come from dhcp if pxe booting
@@ -55,4 +55,5 @@ salt-call --no-color --grains >/dev/null
 <%= snippet 'chef_client' %>
 <% end -%>
 <%= snippet('remote_execution_ssh_keys') %>
+<%= snippet 'preseed_networking_setup' %>
 /usr/bin/wget --no-proxy --quiet --output-document=/dev/null --no-check-certificate <%= foreman_url %>
