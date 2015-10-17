@@ -40,6 +40,33 @@ name: coreos_cloudconfig
               [Service]
               Type=oneshot
               ExecStart=/usr/bin/systemctl enable docker-tcp.socket
+<% if @host.subnet.respond_to?(:dhcp_boot_mode?) -%>
+<% dhcp = @host.subnet.dhcp_boot_mode? && !@static -%>
+<% else -%>
+<% dhcp = !@static -%>
+<% end -%>
+<% unless dhcp -%>
+          - name: systemd-networkd.service
+            command: stop
+          - name: static.network
+            command: start
+            content: |
+              [Match]
+              MACAddress=<%= @host.mac %>
+              [Network]
+              Gateway=<%= @host.subnet.gateway %>
+              Address=<%= @host.ip %>/<%= @host.subnet.cidr %>
+              DNS=<%= @host.subnet.dns_primary %>
+              DNS=<%= @host.subnet.dns_secondary %>
+          - name: down-interfaces.service
+            command: start
+            content: |
+              [Service]
+              Type=oneshot
+              ExecStart=/usr/bin/bash -c 'for i in $(/usr/bin/ls /sys/class/net/); do [ $i == "lo" ] || (/usr/bin/ip link set $i down; /usr/bin/ip addr flush dev $i); done'
+          - name: systemd-networkd.service
+            command: restart
+<% end -%>
 <% if @host.params['ssh_authorized_keys'] -%>
       ssh_authorized_keys:
   <% @host.params['ssh_authorized_keys'].split(',').map(&:strip).each do |ssh_key| -%>
