@@ -63,8 +63,9 @@ timezone --utc <%= @host.params['time-zone'] || 'UTC' %>
 services --disabled gpm,sendmail,cups,pcmcia,isdn,rawdevices,hpoj,bluetooth,openibd,avahi-daemon,avahi-dnsconfd,hidd,hplip,pcscd
 <% end -%>
 
-<% if realm_compatible && @host.info['parameters']['realm'] && @host.otp && @host.realm && @host.realm.realm_type == 'Active Directory' -%>
-realm join --one-time-password='<%= @host.otp %>' <%= @host.realm %>
+<% if realm_compatible && @host.info['parameters']['realm'] && @host.realm && @host.realm.realm_type == 'Active Directory' -%>
+# One-time password will be requested at install time. Otherwise, $HOST[OTP] is used as a placeholder value.
+realm join --one-time-password='<%= @host.otp || "$HOST[OTP]" %>' <%= @host.realm %>
 <% end -%>
 
 <% if @host.operatingsystem.name == 'Fedora' -%>
@@ -152,7 +153,7 @@ echo "updating system time"
 /usr/sbin/ntpdate -sub <%= @host.params['ntp-server'] || '0.fedora.pool.ntp.org' %>
 /usr/sbin/hwclock --systohc
 
-<% if @host.info['parameters']['realm'] && @host.otp && @host.realm && @host.realm.realm_type == 'FreeIPA' -%>
+<% if @host.info['parameters']['realm'] && @host.realm && @host.realm.realm_type == 'FreeIPA' -%>
 <%= snippet 'freeipa_register' %>
 <% end -%>
 
