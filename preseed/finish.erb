@@ -13,7 +13,7 @@ oses:
 <%
   # safemode renderer does not support unary negation
   pm_set = @host.puppetmaster.empty? ? false : true
-  puppet_enabled = pm_set || @host.params['force-puppet'] && @host.params['force-puppet'] == 'true'
+  puppet_enabled = pm_set || @host.param_true?('force-puppet')
   salt_enabled = @host.params['salt_master'] ? true : false
   chef_enabled = @host.respond_to?(:chef_proxy) && @host.chef_proxy
 %>

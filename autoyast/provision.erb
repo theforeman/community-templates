@@ -8,7 +8,7 @@ name: AutoYaST default
   os_minor = @host.operatingsystem.minor.to_i
   # safemode renderer does not support unary negation
   pm_set = @host.puppetmaster.empty? ? false : true
-  puppet_enabled = pm_set || @host.params['force-puppet'] && @host.params['force-puppet'] == 'true'
+  puppet_enabled = pm_set || @host.param_true?('force-puppet')
   salt_enabled = @host.params['salt_master'] ? true : false
 %>
 <!DOCTYPE profile>
