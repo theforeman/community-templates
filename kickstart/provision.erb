@@ -113,7 +113,7 @@ epel-release
 <% end -%>
 <% if puppet_enabled %>
 puppet
-<% if (param_true? @host.params['enable-puppetlabs-repo']) -%>
+<% if @host.param_true?('enable-puppetlabs-repo') -%>
 puppetlabs-release
 <% end -%>
 <% end -%>
