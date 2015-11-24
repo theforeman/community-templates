@@ -53,7 +53,7 @@ class FakeNamespace
       :params => {
         'enable-puppetlabs-repo' => 'true'
       },
-      :info => { 
+      :info => {
         'parameters' => { 'realm' => 'EXAMPLE.COM' }
       },
       :otp => 'onetimepassword',
