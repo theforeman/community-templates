@@ -22,6 +22,15 @@ class FakeStruct
   def to_s
     as_string
   end
+
+  # Roughly equivalent to HostCommon#param_true?/false in Foreman core
+  def param_true?(name)
+    params[name] == 'true'
+  end
+
+  def param_false?(name)
+    params[name] == 'false'
+  end
 end
 
 class FakeNamespace
