@@ -1,7 +1,7 @@
+sudo: false
 language: ruby
 rvm: 1.9.3
 install:
-  - sudo apt-get -y install python-urlgrabber
-  - git clone --depth 1 -b r1.99.48-1 git://git.fedorahosted.org/git/pykickstart.git
-  - cd pykickstart && sudo make install DESTDIR=/
-env: KSVALIDATOR=/usr/local/bin/ksvalidator
+  - pip install --user six requests
+  - git clone --depth 1 -b r2.20-1 git://github.com/rhinstaller/pykickstart.git
+  - (cd pykickstart && pip install --user .)
