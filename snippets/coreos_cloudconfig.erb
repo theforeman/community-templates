@@ -17,6 +17,7 @@ name: coreos_cloudconfig
             command: start
           - name: fleet.service
             command: start
+<% if @host.param_true?('expose_docker_socket') -%>
           - name: docker-tcp.socket
             command: start
             enable: yes
@@ -40,6 +41,7 @@ name: coreos_cloudconfig
               [Service]
               Type=oneshot
               ExecStart=/usr/bin/systemctl enable docker-tcp.socket
+<% end -%>
 <% if @host.subnet.respond_to?(:dhcp_boot_mode?) -%>
 <% dhcp = @host.subnet.dhcp_boot_mode? && !@static -%>
 <% else -%>
