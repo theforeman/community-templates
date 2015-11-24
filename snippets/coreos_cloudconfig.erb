@@ -8,10 +8,10 @@ name: coreos_cloudconfig
 <% if @host.params['etcd_discovery_url'] -%>
           discovery: <%= @host.params['etcd_discovery_url'] %>
 <% end -%>
-          advertise-client-urls: http://<%= @host.ip %>:2379,http://<%= @host.ip %>:4001
-          initial-advertise-peer-urls: http://<%= @host.ip %>:2380,http://<%= @host.ip %>:7001
-          listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
-          listen-peer-urls: http://0.0.0.0:2380,http://0.0.0.0:7001
+          advertise-client-urls: http://<%= @host.ip %>:2379
+          initial-advertise-peer-urls: http://<%= @host.ip %>:2380
+          listen-client-urls: http://0.0.0.0:2379
+          listen-peer-urls: http://0.0.0.0:2380
         units:
           - name: etcd2.service
             command: start
