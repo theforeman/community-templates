@@ -18,6 +18,7 @@ This template accepts the following parameters:
 - salt_master: string (default=undef)
 - ntp-server: string (default="0.fedora.pool.ntp.org")
 - bootloader-append: string (default="nofb quiet splash=quiet")
+- disable-firewall: boolean (default=false)
 %>
 <%
   rhel_compatible = @host.operatingsystem.family == 'Redhat' && @host.operatingsystem.name != 'Fedora'
@@ -48,7 +49,11 @@ skipx
 network --bootproto <%= dhcp ? 'dhcp' : "static --ip=#{@host.ip} --netmask=#{subnet.mask} --gateway=#{subnet.gateway} --nameserver=#{[subnet.dns_primary, subnet.dns_secondary].select(&:present?).join(',')}" %> --hostname <%= @host %><%= os_major >= 6 ? " --device=#{@host.mac}" : '' -%>
 
 rootpw --iscrypted <%= root_pass %>
+<% if @host.param_true?('disable-firewall') -%>
+firewall --disable
+<% else -%>
 firewall --<%= os_major >= 6 ? 'service=' : '' %>ssh
+<% end -%>
 authconfig --useshadow --passalgo=sha256 --kickstart
 timezone --utc <%= @host.params['time-zone'] || 'UTC' %>
 <% if rhel_compatible && os_major > 4 -%>
