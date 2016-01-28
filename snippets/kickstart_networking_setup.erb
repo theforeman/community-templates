@@ -142,6 +142,12 @@ ONBOOT=yes
 <% if interface.respond_to?(:primary) && interface.primary -%>
 PEERDNS=yes
 PEERROUTES=yes
+<% if !dhcp && !subnet.dns_primary.nil? && !subnet.dns_primary.empty? -%>
+DNS1=<%= subnet.dns_primary %>
+<% if !subnet.dns_secondary.nil? && !subnet.dns_secondary.empty? -%>
+DNS2=<%= subnet.dns_secondary %>
+<% end -%>
+<% end -%>
 <% else -%>
 PEERDNS=no
 PEERROUTES=no
