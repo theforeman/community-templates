@@ -135,6 +135,8 @@ chkconfig salt-minion on
 salt-call --no-color --grains >/dev/null
 <% end -%>
 
+<%= snippet('remote_execution_ssh_keys') %>
+
 /usr/bin/curl -o /dev/null -k '<%= foreman_url %>'
 
 rm /etc/resolv.conf

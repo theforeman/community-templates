@@ -22,6 +22,8 @@ fetch -q --no-verify-hostname --no-verify-peer -o /mnt/tmp/finish.sh -d <%= fore
 chroot /mnt /bin/sh /tmp/finish.sh
 rm /mnt/tmp/finish.sh
 
+<%= snippet('remote_execution_ssh_keys') %>
+
 fetch -q --no-verify-hostname --no-verify-peer -o /dev/null -d <%= foreman_url %>
 sleep 5
 reboot

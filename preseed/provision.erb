@@ -132,6 +132,8 @@ d-i apt-setup/backports boolean true
   <% puppet_package = '' -%>
 <% end -%>
 
+<%= snippet('remote_execution_ssh_keys') %>
+
 # Install some base packages
 d-i pkgsel/include string <%= puppet_package %> <%= salt_package %> lsb-release
 d-i pkgsel/update-policy select unattended-upgrades
