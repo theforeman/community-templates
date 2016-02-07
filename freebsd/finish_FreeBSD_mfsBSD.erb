@@ -49,4 +49,5 @@ echo 'salt_minion_paths="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local
 # Running salt-call to trigger key signing
 /usr/local/bin/salt-call --no-color --grains >/dev/null
 <% end -%>
+<%= snippet('remote_execution_ssh_keys') %>
 exit 0
