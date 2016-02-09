@@ -31,5 +31,5 @@ EOF
 
 chmod 700 <%= ssh_path %>
 chmod 600 <%= ssh_path %>/authorized_keys
-chown -R <%= "#{ssh_user}:#{ssh_user}" %> <%= ssh_path %>
+chown -R <%= "#{ssh_user}:" %> <%= ssh_path %>
 <% end %>
