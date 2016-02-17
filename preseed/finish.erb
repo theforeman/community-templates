@@ -52,7 +52,7 @@ salt-call --no-color --grains >/dev/null
 <% end -%>
 
 <% if chef_enabled %>
-<%= respond_to?(:chef_bootstrap) ? chef_bootstrap(@host) : snippet_if_exists("chef-client omnibus bootstrap") %>
-<% end%>
+<%= snippet 'chef_client' %>
+<% end -%>
 <%= snippet('remote_execution_ssh_keys') %>
 /usr/bin/wget --no-proxy --quiet --output-document=/dev/null --no-check-certificate <%= foreman_url %>
