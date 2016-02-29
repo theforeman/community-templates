@@ -97,7 +97,11 @@ bootloader --location=mbr --append="<%= @host.params['bootloader-append'] || 'no
 <% end -%>
 
 text
+<% if @host.respond_to?(:bootdisk_build?) && @host.bootdisk_build? %>
+reboot --eject
+<% else -%>
 reboot
+<% end -%>
 
 %packages
 yum
