@@ -1,0 +1,46 @@
+<%#
+kind: snippet
+name: puppet_setup
+description: this snippet will configure the Puppet agent
+%>
+<%
+etc_path = (@host.operatingsystem.family == 'Freebsd') ? '/usr/local/etc/puppet' : '/etc/puppet'
+bin_path = (@host.operatingsystem.family == 'Freebsd') ? '/usr/local/bin' : '/usr/bin'
+%>
+
+<% if @host.operatingsystem.family == 'Debian' -%>
+apt-get update
+apt-get install -y puppet
+<% elsif @host.operatingsystem.family == 'Freebsd' -%>
+pkg install -y puppet
+<% elsif @host.operatingsystem.family == 'Redhat' -%>
+yum -t -y install puppet
+<% end -%>
+
+cat > <%= etc_path %>/puppet.conf << EOF
+<%= snippet 'puppet.conf' %>
+EOF
+
+<% if @host.operatingsystem.family == 'Debian' -%>
+if [ -f "/etc/default/puppet" ]
+then
+/bin/sed -i 's/^START=no/START=yes/' /etc/default/puppet
+fi
+/usr/bin/puppet agent --enable
+<% elsif @host.operatingsystem.family == 'Freebsd' -%>
+echo 'puppet_enable="YES"' >>/etc/rc.conf
+<% elsif @host.operatingsystem.name == 'Fedora' -%>
+puppet_unit=puppet
+/usr/bin/systemctl list-unit-files | grep -q puppetagent && puppet_unit=puppetagent
+/usr/bin/systemctl enable ${puppet_unit}
+<% elsif @host.operatingsystem.family == 'Redhat' -%>
+/sbin/chkconfig --level 345 puppet on
+<% elsif @host.operatingsystem.family == 'Suse' -%>
+if [ -f "/etc/sysconfig/puppet" ]
+then
+/usr/bin/sed -ie s/^PUPPET_SERVER=.*/PUPPET_SERVER=<%= @host.puppetmaster.blank? ? '' : @host.puppetmaster %>/ /etc/sysconfig/puppet
+fi
+/sbin/chkconfig puppet on -f
+<% end -%>
+
+<%= bin_path %>/puppet agent --config <%= etc_path %>/puppet.conf --onetime --tags no_such_tag <%= @host.puppetmaster.blank? ? '' : "--server #{@host.puppetmaster}" %> --no-daemonize

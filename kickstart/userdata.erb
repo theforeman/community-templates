@@ -23,15 +23,7 @@ oses:
   puppet_enabled = pm_set || @host.param_true?('force-puppet')
 %>
 <% if puppet_enabled %>
-yum install -y puppet
-cat > /etc/puppet/puppet.conf << EOF
-<%= snippet 'puppet.conf' %>
-EOF
-
-# Setup puppet to run on system reboot
-/sbin/chkconfig --level 345 puppet on
-
-/usr/bin/puppet agent --config /etc/puppet/puppet.conf --onetime --tags no_such_tag <%= @host.puppetmaster.blank? ? '' : "--server #{@host.puppetmaster}" %> --no-daemonize
+<%= snippet 'puppet_setup' %>
 <% end -%>
 
 # UserData still needs wget to mark as finished

@@ -30,13 +30,7 @@ ntpdate <%= @host.params['ntp-server'] || '0.freebsd.pool.ntp.org' %>
 env ASSUME_ALWAYS_YES=YES pkg bootstrap
 
 <% if puppet_enabled %>
-pkg install -y puppet
-echo 'puppet_enable="YES"' >>/etc/rc.conf
-cat > /usr/local/etc/puppet/puppet.conf << EOF
-<%= snippet 'puppet.conf' %>
-EOF
-
-/usr/local/bin/puppet agent --config /usr/local/etc/puppet/puppet.conf --onetime --tags no_such_tag <%= @host.puppetmaster.blank? ? '' : "--server #{@host.puppetmaster}" %> --no-daemonize
+<%= snippet 'puppet_setup' %>
 <% end -%>
 
 <% if salt_enabled %>

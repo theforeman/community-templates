@@ -42,7 +42,6 @@ rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-fedora-<%= os_major -%>.no
 rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-<%= os_major -%>.noarch.rpm
 <% end -%>
 <% end -%>
-yum -t -y -e 0 install puppet
 <% end -%>
 
 #update local time
@@ -58,27 +57,13 @@ echo "updating system time"
 yum -t -y -e 0 update
 
 <% if puppet_enabled %>
-echo "Configuring puppet"
-cat > /etc/puppet/puppet.conf << EOF
-<%= snippet 'puppet.conf' %>
-EOF
+<%= snippet 'puppet_setup' %>
+<% end -%>
 
 <%= snippet('remote_execution_ssh_keys') %>
 
 <% if chef_enabled %>
 <%= snippet 'chef_client' %>
-<% end -%>
-
-# Setup puppet to run on system reboot
-<% if @host.operatingsystem.name == 'Fedora' -%>
-puppet_unit=puppet
-/usr/bin/systemctl list-unit-files | grep -q puppetagent && puppet_unit=puppetagent
-/usr/bin/systemctl enable ${puppet_unit}
-<% else -%>
-/sbin/chkconfig --level 345 puppet on
-<% end -%>
-
-/usr/bin/puppet agent --config /etc/puppet/puppet.conf -o --tags no_such_tag <%= @host.puppetmaster.blank? ? '' : "--server #{@host.puppetmaster}" %> --no-daemonize
 <% end -%>
 
 exit 0

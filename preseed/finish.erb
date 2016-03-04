@@ -26,17 +26,9 @@ oses:
 /bin/sed -i "s/^<%= @host.ip %>.*/<%= @host.ip %>\t<%= @host.shortname %>.<%= @host.domain %>\t<%= @host.shortname %>/g" /etc/hosts
 /bin/echo <%= @host.shortname %> > /etc/hostname
 <% end -%>
+
 <% if puppet_enabled %>
-cat > /etc/puppet/puppet.conf << EOF
-<%= snippet 'puppet.conf' %>
-EOF
-if [ -f "/etc/default/puppet" ]
-then
-/bin/sed -i 's/^START=no/START=yes/' /etc/default/puppet
-fi
-/bin/touch /etc/puppet/namespaceauth.conf
-/usr/bin/puppet agent --enable
-/usr/bin/puppet agent --config /etc/puppet/puppet.conf --onetime --tags no_such_tag <%= @host.puppetmaster.blank? ? '' : "--server #{@host.puppetmaster}" %> --no-daemonize
+<%= snippet 'puppet_setup' %>
 <% end -%>
 
 <% if @host.info['parameters']['realm'] && @host.realm && @host.realm.realm_type == 'FreeIPA' -%>
