@@ -22,6 +22,7 @@ service network restart
   os_major = @host.operatingsystem.major.to_i
   pm_set = @host.puppetmaster.empty? ? false : true
   puppet_enabled = pm_set || @host.param_true?('force-puppet')
+  salt_enabled = @host.params['salt_master'] ? true : false
   chef_enabled = @host.respond_to?(:chef_proxy) && @host.chef_proxy
 %>
 
@@ -59,7 +60,9 @@ yum -t -y -e 0 update
 <% if puppet_enabled %>
 <%= snippet 'puppet_setup' %>
 <% end -%>
-
+<% if salt_enabled %>
+<%= snippet 'saltstack_setup' %>
+<% end -%>
 <%= snippet('remote_execution_ssh_keys') %>
 
 <% if chef_enabled %>

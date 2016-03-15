@@ -36,11 +36,7 @@ oses:
 <% end -%>
 
 <% if salt_enabled %>
-cat > /etc/salt/minion << EOF
-<%= snippet 'saltstack_minion' %>
-EOF
-# Running salt-call to trigger key signing
-salt-call --no-color --grains >/dev/null
+<%= snippet 'saltstack_setup' %>
 <% end -%>
 
 <% if chef_enabled %>

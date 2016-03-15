@@ -176,13 +176,7 @@ yum -t -y -e 0 update
 <% end -%>
 
 <% if salt_enabled %>
-cat > /etc/salt/minion << EOF
-<%= snippet 'saltstack_minion' %>
-EOF
-# Setup salt-minion to run on system reboot
-/sbin/chkconfig --level 345 salt-minion on
-# Running salt-call to trigger key signing
-salt-call --no-color --grains >/dev/null
+<%= snippet 'saltstack_setup' %>
 <% end -%>
 
 sync

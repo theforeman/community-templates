@@ -34,14 +34,7 @@ env ASSUME_ALWAYS_YES=YES pkg bootstrap
 <% end -%>
 
 <% if salt_enabled %>
-pkg install -y py27-salt
-cat > /usr/local/etc/salt/minion << EOF
-<%= snippet 'saltstack_minion' %>
-EOF
-echo 'salt_minion_enable="YES"' >>/etc/rc.conf
-echo 'salt_minion_paths="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin"' >>/etc/rc.conf
-# Running salt-call to trigger key signing
-/usr/local/bin/salt-call --no-color --grains >/dev/null
+<%= snippet 'saltstack_setup' %>
 <% end -%>
 <%= snippet('remote_execution_ssh_keys') %>
 exit 0
