@@ -35,7 +35,7 @@ reboot
 %post
 (
 # Report success back to Foreman
-curl -s -o /dev/null --insecure <%= foreman_url %>
+curl -s -o /dev/null --insecure <%= foreman_url('built') %>
 ) 2>&1 | tee /mnt/sysimage/root/install.post.log
 
 exit 0

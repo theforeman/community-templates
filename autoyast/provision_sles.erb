@@ -3,8 +3,7 @@
 kind: provision
 name: AutoYaST SLES default
 oses:
-- SLES 11
-- SLES 12
+- SLES
 %>
 <%
   os_major = @host.operatingsystem.major.to_i
@@ -71,10 +70,8 @@ oses:
       <pattern>Minimal</pattern>
     </patterns>
     <packages config:type="list">
-      <package>less</package>
       <package>lsb-release</package>
       <package>openssh</package>
-      <package>vim</package>
 <% if puppet_enabled -%>
       <package>rubygem-puppet</package>
 <% end -%>
@@ -117,6 +114,9 @@ cp /etc/resolv.conf /mnt/etc
         <notification>Setting up Puppet / Foreman ...</notification>
         <source><![CDATA[
 /bin/hostname <%= @host.name %>
+
+<%= snippet('remote_execution_ssh_keys') %>
+
 <% if puppet_enabled -%>
 <%= snippet 'puppet_setup' %>
 <% end -%>
@@ -124,11 +124,12 @@ cp /etc/resolv.conf /mnt/etc
 <% if salt_enabled %>
 <%= snippet 'saltstack_setup' %>
 <% end -%>
+
 <% if spacewalk_enabled -%>
 <%= snippet 'redhat_register' %>
 <% end -%>
 
-/usr/bin/curl -o /dev/null -k '<%= foreman_url %>'
+/usr/bin/curl -o /dev/null -k '<%= foreman_url('built') %>'
 
 rm /etc/resolv.conf
 ]]>

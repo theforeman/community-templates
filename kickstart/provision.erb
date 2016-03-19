@@ -2,15 +2,8 @@
 kind: provision
 name: Kickstart default
 oses:
-- CentOS 4
-- CentOS 5
-- CentOS 6
-- CentOS 7
-- Fedora 16
-- Fedora 17
-- Fedora 18
-- Fedora 19
-- Fedora 20
+- CentOS
+- Fedora
 %>
 <%#
 This template accepts the following parameters:
@@ -52,7 +45,6 @@ skipx
 <% else -%>
 <% dhcp = !@static -%>
 <% end -%>
-
 network --bootproto <%= dhcp ? 'dhcp' : "static --ip=#{@host.ip} --netmask=#{subnet.mask} --gateway=#{subnet.gateway} --nameserver=#{[subnet.dns_primary, subnet.dns_secondary].select(&:present?).join(',')}" %> --hostname <%= @host %><%= os_major >= 6 ? " --device=#{@host.mac}" : '' -%>
 
 rootpw --iscrypted <%= root_pass %>
@@ -88,6 +80,9 @@ bootloader --append="<%= @host.params['bootloader-append'] || 'nofb quiet splash
 part biosboot --fstype=biosboot --size=1
 <% else -%>
 bootloader --location=mbr --append="<%= @host.params['bootloader-append'] || 'nofb quiet splash=quiet' %>" <%= grub_pass %>
+<% if os_major == 5 -%>
+key --skip
+<% end -%>
 <% end -%>
 
 <% if @dynamic -%>
@@ -167,7 +162,7 @@ echo 'proxy = <%= proxy_uri %>' >> /etc/yum.conf
 <% end -%>
 
 # update all the base packages from the updates repository
-yum -t -y -e 0 update
+yum -t -y update
 
 <%= snippet('remote_execution_ssh_keys') %>
 
@@ -187,7 +182,7 @@ sync
 
 # Inform the build system that we are done.
 echo "Informing Foreman that we are built"
-wget -q -O /dev/null --no-check-certificate <%= foreman_url %>
+wget -q -O /dev/null --no-check-certificate <%= foreman_url('built') %>
 ) 2>&1 | tee /root/install.post.log
 exit 0
 

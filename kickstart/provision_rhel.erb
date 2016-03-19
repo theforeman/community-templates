@@ -2,10 +2,7 @@
 kind: provision
 name: Kickstart RHEL default
 oses:
-- RedHat 4
-- RedHat 5
-- RedHat 6
-- RedHat 7
+- RedHat
 %>
 <%#
 This template accepts the following parameters:
@@ -23,12 +20,14 @@ This template accepts the following parameters:
 %>
 <%
   os_major = @host.operatingsystem.major.to_i
+  realm_compatible = os_major >= 7 ? true : false
   # safemode renderer does not support unary negation
   pm_set = @host.puppetmaster.empty? ? false : true
   proxy_uri = @host.params['http-proxy'] ? "http://#{@host.params['http-proxy']}:#{@host.params['http-proxy-port']}" : nil
   proxy_string = proxy_uri ? " --proxy=#{proxy_uri}" : ''
   puppet_enabled = pm_set || @host.param_true?('force-puppet')
   salt_enabled = @host.params['salt_master'] ? true : false
+  chef_enabled = @host.respond_to?(:chef_proxy) && @host.chef_proxy
   section_end = os_major <= 5 ? '' : '%end'
 %>
 install
@@ -40,9 +39,9 @@ skipx
 
 <% subnet = @host.subnet -%>
 <% if subnet.respond_to?(:dhcp_boot_mode?) -%>
-  <% dhcp = subnet.dhcp_boot_mode? && !@static -%>
+<% dhcp = subnet.dhcp_boot_mode? && !@static -%>
 <% else -%>
-  <% dhcp = !@static -%>
+<% dhcp = !@static -%>
 <% end -%>
 network --bootproto <%= dhcp ? 'dhcp' : "static --ip=#{@host.ip} --netmask=#{subnet.mask} --gateway=#{subnet.gateway} --nameserver=#{[subnet.dns_primary, subnet.dns_secondary].select(&:present?).join(',')}" %> --hostname <%= @host %><%= os_major >= 6 ? " --device=#{@host.mac}" : '' -%>
 
@@ -50,15 +49,16 @@ rootpw --iscrypted <%= root_pass %>
 firewall --<%= os_major >= 6 ? 'service=' : '' %>ssh
 authconfig --useshadow --passalgo=sha256 --kickstart
 timezone --utc <%= @host.params['time-zone'] || 'UTC' %>
+<% if os_major > 4 -%>
+services --disabled gpm,sendmail,cups,pcmcia,isdn,rawdevices,hpoj,bluetooth,openibd,avahi-daemon,avahi-dnsconfd,hidd,hplip,pcscd
+<% end -%>
 
-<% if os_major >= 7 && @host.info['parameters']['realm'] && @host.realm && @host.realm.realm_type == 'Active Directory' -%>
+<% if realm_compatible && @host.info['parameters']['realm'] && @host.realm && @host.realm.realm_type == 'Active Directory' -%>
 # One-time password will be requested at install time. Otherwise, $HOST[OTP] is used as a placeholder value.
-realm join --one-time-password=<%= @host.otp || "$HOST[OTP]" %> <%= @host.realm %>
+realm join --one-time-password='<%= @host.otp || "$HOST[OTP]" %>' <%= @host.realm %>
 <% end -%>
 
 <% if os_major > 4 -%>
-services --disabled gpm,sendmail,cups,pcmcia,isdn,rawdevices,hpoj,bluetooth,openibd,avahi-daemon,avahi-dnsconfd,hidd,hplip,pcscd
-
 repo --name="EPEL" --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %><%= proxy_string %>
 <% if puppet_enabled && @host.param_true?('enable-puppetlabs-repo') -%>
 repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/products/<%= @host.architecture %><%= proxy_string %>
@@ -70,7 +70,6 @@ bootloader --location=mbr --append="<%= @host.params['bootloader-append'] || 'no
 <% if os_major == 5 -%>
 key --skip
 <% end -%>
-
 
 <% if @dynamic -%>
 %include /tmp/diskpart.cfg
@@ -90,7 +89,9 @@ wget
 <% if os_major >= 6 -%>
 redhat-lsb-core
 <% end -%>
+<% if os_major > 4 -%>
 epel-release
+<% end -%>
 <% if puppet_enabled && @host.param_true?('enable-puppetlabs-repo') -%>
 puppetlabs-release
 <% end -%>
@@ -142,7 +143,13 @@ echo 'proxy = <%= proxy_uri %>' >> /etc/yum.conf
 <% end -%>
 
 # update all the base packages from the updates repository
-yum -t -y -e 0 update
+yum -t -y update
+
+<%= snippet('remote_execution_ssh_keys') %>
+
+<% if chef_enabled %>
+<%= snippet 'chef_client' %>
+<% end -%>
 
 <% if puppet_enabled %>
 <%= snippet 'puppet_setup' %>
@@ -156,7 +163,7 @@ sync
 
 # Inform the build system that we are done.
 echo "Informing Foreman that we are built"
-wget -q -O /dev/null --no-check-certificate <%= foreman_url %>
+wget -q -O /dev/null --no-check-certificate <%= foreman_url('built') %>
 ) 2>&1 | tee /root/install.post.log
 exit 0
 

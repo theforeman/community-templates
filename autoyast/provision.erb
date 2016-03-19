@@ -2,6 +2,8 @@
 <%#
 kind: provision
 name: AutoYaST default
+oses:
+- OpenSUSE
 %>
 <%
   os_major = @host.operatingsystem.major.to_i
@@ -113,6 +115,9 @@ cp /etc/resolv.conf /mnt/etc
         <notification>Setting up Puppet / Foreman ...</notification>
         <source><![CDATA[
 /bin/hostname <%= @host.name %>
+
+<%= snippet('remote_execution_ssh_keys') %>
+
 <% if puppet_enabled -%>
 <%= snippet 'puppet_setup' %>
 <% end -%>
@@ -121,9 +126,7 @@ cp /etc/resolv.conf /mnt/etc
 <%= snippet 'saltstack_setup' %>
 <% end -%>
 
-<%= snippet('remote_execution_ssh_keys') %>
-
-/usr/bin/curl -o /dev/null -k '<%= foreman_url %>'
+/usr/bin/curl -o /dev/null -k '<%= foreman_url('built') %>'
 
 rm /etc/resolv.conf
 ]]>
