@@ -21,6 +21,7 @@ The templates use some Host Parameters to contol the flow of the template. These
 * `partitioning-vg-name`: LVM volume group name (default: `vg01` for `Preseed default lvm`)
 * `partitioning-filesystem`: One of `ext4`, `ext4`, `btrfs`, ... (default: empty, the default is used)
 * `enable-puppetlabs-repo`: Add the Puppet Labs APT repo to the APT sources during install (default: `false`)
+* `enable-puppetlabs-pc1-repo`: Add the Puppet Labs PC1 APT repo to the APT sources during install (default: `false`)
 * `enable-saltstack-repo`: Add the SaltStack APT repo to the APT sources during install (default: `false`)
 * `salt_master`: SaltStack Master (default: empty)
 * `salt_grains`: Salt client specific information, like facter (default: empty)

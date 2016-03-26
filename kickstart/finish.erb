@@ -36,6 +36,13 @@ rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-fedora-<%= os_major -%>.no
 rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-<%= os_major -%>.noarch.rpm
 <% end -%>
 <% end -%>
+<% if @host.param_true?('enable-puppetlabs-pc1-repo') -%>
+<% if @host.operatingsystem.name == 'Fedora' -%>
+rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-pc1-fedora-<%= os_major -%>.noarch.rpm
+<% else -%>
+rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-pc1-el-<%= os_major -%>.noarch.rpm
+<% end -%>
+<% end -%>
 <% end -%>
 
 #update local time
