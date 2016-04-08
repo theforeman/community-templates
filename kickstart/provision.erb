@@ -169,6 +169,8 @@ echo 'proxy = <%= proxy_uri %>' >> /etc/yum.conf
 # update all the base packages from the updates repository
 yum -t -y -e 0 update
 
+<%= snippet('remote_execution_ssh_keys') %>
+
 <% if chef_enabled %>
 <%= snippet 'chef_client' %>
 <% end -%>
@@ -178,8 +180,6 @@ echo "Configuring puppet"
 cat > /etc/puppet/puppet.conf << EOF
 <%= snippet 'puppet.conf' %>
 EOF
-
-<%= snippet('remote_execution_ssh_keys') %>
 
 # Setup puppet to run on system reboot
 /sbin/chkconfig --level 345 puppet on
