@@ -32,6 +32,14 @@ cat > <%= etc_path %>/puppet.conf << EOF
 <%= snippet 'puppet.conf' %>
 EOF
 
+<% if @host.operatingsystem.family == 'Redhat' -%>
+<% if @host.operatingsystem.major.to_i > 6 -%>
+puppet_unit=puppet
+/usr/bin/systemctl list-unit-files | grep -q puppetagent && puppet_unit=puppetagent
+/usr/bin/systemctl enable ${puppet_unit}
+<% end -%>
+/sbin/chkconfig --level 345 puppet on
+<% end -%>
 <% unless @host.param_true?('enable-puppetlabs-pc1-repo') -%>
 <% if @host.operatingsystem.family == 'Debian' -%>
 if [ -f "/etc/default/puppet" ]
@@ -41,12 +49,6 @@ fi
 /usr/bin/puppet agent --enable
 <% elsif @host.operatingsystem.family == 'Freebsd' -%>
 echo 'puppet_enable="YES"' >>/etc/rc.conf
-<% elsif @host.operatingsystem.name == 'Fedora' -%>
-puppet_unit=puppet
-/usr/bin/systemctl list-unit-files | grep -q puppetagent && puppet_unit=puppetagent
-/usr/bin/systemctl enable ${puppet_unit}
-<% elsif @host.operatingsystem.family == 'Redhat' -%>
-/sbin/chkconfig --level 345 puppet on
 <% elsif @host.operatingsystem.family == 'Suse' -%>
 if [ -f "/etc/sysconfig/puppet" ]
 then
