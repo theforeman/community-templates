@@ -46,7 +46,7 @@ if [ -f "/etc/default/puppet" ]
 then
 /bin/sed -i 's/^START=no/START=yes/' /etc/default/puppet
 fi
-/usr/bin/puppet agent --enable
+<%= bin_path %>/puppet agent --enable
 <% elsif @host.operatingsystem.family == 'Freebsd' -%>
 echo 'puppet_enable="YES"' >>/etc/rc.conf
 <% elsif @host.operatingsystem.family == 'Suse' -%>
