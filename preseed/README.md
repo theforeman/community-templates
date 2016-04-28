@@ -14,7 +14,7 @@ Tested on:
 
 The templates use some Host Parameters to contol the flow of the template. These are:
 
-* `install-disk`: What device to install to (default: `/dev/sda /dev/vda /dev/xvda`, the first available is picked)
+* `install-disk`: What device to install to (default: the first disk returned with `list-devices disk`)
 * `partitioning-method`: `regular` (default for `Preseed default`), `lvm` (default for `Preseed default lvm`) or `crypto`
 * `partitioning-recipe`: `atomic` (default for `Preseed default`), `home`, or `multi` (default for `Preseed default lvm`)
 * `partitioning-expert-recipe`: Entire recipe (default: empty, i.e `partitioning-recipe`)
