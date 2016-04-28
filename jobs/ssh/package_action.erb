@@ -1,0 +1,65 @@
+<%#
+kind: job_template
+name: Package Action - SSH Default
+job_category: Packages
+description_format: "%{action} package(s) %{package}"
+provider_type: SSH
+template_inputs:
+- name: pre_script
+  description: A script to run prior to the package action
+  input_type: user
+  required: false
+  advanced: true
+- name: action
+  description: 'The package action: install, update, or remove'
+  input_type: user
+  required: true
+  options: "install\nupdate\nremove\ngroup install\ngroup remove"
+- name: package
+  description: The name of the package, if any
+  input_type: user
+  required: false
+- name: post_script
+  description: A script to run after the package action
+  input_type: user
+  required: false
+  advanced: true
+%>
+
+<%
+  supported_families = ['Redhat', 'Debian']
+  render_error(N_('Unsupported or no operating system found for this host.')) unless @host.operatingsystem && supported_families.include?(@host.operatingsystem.family)
+%>
+
+# Helper function that exits with a particular message and code.
+#
+# Usage:
+#   exit_with_message "Could not do a thing" 2
+#
+function exit_with_message() {
+  echo "${1}, exiting..."
+  exit $2
+}
+
+<% unless input("pre_script").blank? -%>
+  # Pre Script
+  <%= input("pre_script") %>
+  RETVAL=$?
+  [ $RETVAL -eq 0 ] || exit_with_message "Pre script failed" $RETVAL
+<% end -%>
+
+# Action
+<% if @host.operatingsystem.family == 'Redhat' -%>
+  yum -y <%= input("action") %> <%= input("package") %>
+<% elsif @host.operatingsystem.family == 'Debian' -%>
+  apt-get -y <%= input("action") %> <%= input("package") %>
+<% end -%>
+RETVAL=$?
+[ $RETVAL -eq 0 ] || exit_with_message "Package action failed" $RETVAL
+
+<% unless input("post_script").blank? -%>
+  # Post Script
+  <%= input("post_script") %>
+  RETVAL=$?
+  [ $RETVAL -eq 0 ] || exit_with_message "Post script failed" $RETVAL
+<% end -%>

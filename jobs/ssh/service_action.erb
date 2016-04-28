@@ -1,0 +1,22 @@
+<%#
+kind: job_template
+name: Service Action - SSH Default
+job_category: Services
+description_format: '%{action} service %{service}'
+provider_type: SSH
+template_inputs:
+- name: action
+  description: Action to perform on the service
+  input_type: user
+  options: "restart\nstart\nstop\nstatus"
+  required: true
+- name: service
+  description: Name of the service
+  input_type: user
+  required: true
+%>
+<% if @host.operatingsystem.family == "Redhat" && @host.operatingsystem.major.to_i > 6 %>
+systemctl <%= input("action") %> <%= input("service") %>
+<% else %>
+service <%= input("service") %> <%= input("action") %>
+<% end -%>
