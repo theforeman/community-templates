@@ -4,7 +4,11 @@ name: puppet_setup
 description: this snippet will configure the Puppet agent
 %>
 <%
-if @host.operatingsystem.family == 'Freebsd'
+os_family = @host.operatingsystem.family
+os_major  = @host.operatingsystem.major.to_i
+os_name   = @host.operatingsystem.name
+
+if os_family == 'Freebsd'
   freebsd_package = @host.param_true?('enable-puppet4') ? 'puppet4' : 'puppet38'
   etc_path = '/usr/local/etc/puppet'
   bin_path = '/usr/local/bin'
@@ -19,12 +23,12 @@ else
 end
 %>
 
-<% if @host.operatingsystem.family == 'Debian' -%>
+<% if os_family == 'Debian' -%>
 apt-get update
 apt-get install -y <%= linux_package %>
-<% elsif @host.operatingsystem.family == 'Freebsd' -%>
+<% elsif os_family == 'Freebsd' -%>
 pkg install -y <%= freebsd_package %>
-<% elsif @host.operatingsystem.family == 'Redhat' -%>
+<% elsif os_family == 'Redhat' -%>
 yum -t -y install <%= linux_package %>
 <% end -%>
 
@@ -32,8 +36,8 @@ cat > <%= etc_path %>/puppet.conf << EOF
 <%= snippet 'puppet.conf' %>
 EOF
 
-<% if @host.operatingsystem.family == 'Redhat' -%>
-<% if @host.operatingsystem.major.to_i > 6 -%>
+<% if os_family == 'Redhat' -%>
+<% if os_major > 6 -%>
 puppet_unit=puppet
 /usr/bin/systemctl list-unit-files | grep -q puppetagent && puppet_unit=puppetagent
 /usr/bin/systemctl enable ${puppet_unit}
@@ -41,15 +45,15 @@ puppet_unit=puppet
 /sbin/chkconfig --level 345 puppet on
 <% end -%>
 <% unless @host.param_true?('enable-puppetlabs-pc1-repo') -%>
-<% if @host.operatingsystem.family == 'Debian' -%>
+<% if os_family == 'Debian' -%>
 if [ -f "/etc/default/puppet" ]
 then
 /bin/sed -i 's/^START=no/START=yes/' /etc/default/puppet
 fi
 <%= bin_path %>/puppet agent --enable
-<% elsif @host.operatingsystem.family == 'Freebsd' -%>
+<% elsif os_family == 'Freebsd' -%>
 echo 'puppet_enable="YES"' >>/etc/rc.conf
-<% elsif @host.operatingsystem.family == 'Suse' -%>
+<% elsif os_family == 'Suse' -%>
 if [ -f "/etc/sysconfig/puppet" ]
 then
 /usr/bin/sed -ie s/^PUPPET_SERVER=.*/PUPPET_SERVER=<%= @host.puppetmaster.blank? ? '' : @host.puppetmaster %>/ /etc/sysconfig/puppet
@@ -70,7 +74,7 @@ run-puppet-in-installer to true.
 Note, that this is an *unsupported mode of operation* and not supported by Foreman at all. You have been warned!
 %>
 <% if @host.param_true?('run-puppet-in-installer') -%>
-<% if (@host.operatingsystem.name == 'Ubuntu' and @host.operatingsystem.major.to_i >= 15) or (@host.operatingsystem.name == 'Debian' and @host.operatingsystem.major.to_i >= 8) -%>
+<% if (os_name == 'Ubuntu' and os_major >= 15) or (os_name == 'Debian' and os_major >= 8) -%>
 # Puppet tries to detect the init system by checking the presence of the directory /run/systemd/system. That detection
 # fails in a chroot environment like the one the installer provides. See Puppet tickets PA-136 and PUP-5577
 #
