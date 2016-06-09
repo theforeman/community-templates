@@ -20,15 +20,15 @@ oses:
 <% unless dhcp -%>
     <ip><%= @host.ip %></ip>
     <subnet-mask><%= subnet.mask %></subnet-mask>
-<% if !subnet.gateway.nil? && !subnet.gateway.empty? -%>
+<% if subnet.gateway.present? -%>
     <gateway><%= subnet.gateway %></gateway>
 <% end -%>
 <% end -%>
   </admin-interface>
-<% if !subnet.dns_primary.nil? && !subnet.dns_primary.empty? -%>
+<% if subnet.dns_primary.present? -%>
   <name-server><%= subnet.dns_primary %></name-server>
 <% end -%>
-<% if !subnet.dns_secondary.nil? && !subnet.dns_secondary.empty? -%>
+<% if subnet.dns_secondary.present? -%>
   <name-server><%= subnet.dns_secondary %></name-server>
 <% end -%>
   <ntp-server><%= @host.params['ntp-server'] || 'pool.ntp.org' %></ntp-server>
