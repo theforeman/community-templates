@@ -16,6 +16,11 @@ oses:
 - Debian
 - Ubuntu
 -%>
+<%#
+This template accepts the following parameters:
+- package_upgrade: boolean (default=false)
+- reboot: boolean (default=false)
+-%>
 #cloud-config
 hostname: <%= @host.shortname %>
 fqdn: <%= @host %>
@@ -41,8 +46,19 @@ users:
    lock-passwd: false
    passwd: <%= @host.root_pass %>
 
+<% if @host.param_true?('package_upgrade') -%>
+package_upgrade: true
+<% end -%>
+
 <%# Contact Foreman to confirm instance is built -%>
 phone_home:
- url: <%= foreman_url('built') %>
- post: []
- tries: 10
+  url: <%= foreman_url('built') %>
+  post: []
+  tries: 10
+
+<% if @host.param_true?('reboot') -%>
+power_state:
+  mode: reboot
+  timeout: 30
+  condition: true
+<% end -%>
