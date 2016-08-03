@@ -10,4 +10,4 @@ template_inputs:
   input_type: user
   required: false
 %>
-puppet agent --onetime --no-usecacheonfailure <%= input("puppet_options") %>
+puppet agent --onetime --no-usecacheonfailure --no-daemonize <%= input("puppet_options") %>
