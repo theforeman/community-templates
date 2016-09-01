@@ -45,7 +45,8 @@ class FakeNamespace
         :family => family,
         :major => major,
         :minor => minor,
-        :as_string => name
+        :as_string => name,
+        :password_hash => 'SHA512'
       ),
       :architecture => 'x86_64',
       :diskLayout => DISKLAYOUT,
