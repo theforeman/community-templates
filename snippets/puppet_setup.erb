@@ -34,6 +34,10 @@ if [ -f /usr/bin/dnf ]; then
 else
   yum -t -y install <%= linux_package %>
 fi
+<% elsif os_name == 'SLES' && @host.param_true?('enable-puppetlabs-pc1-repo') -%>
+rpmkeys --import http://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs
+rpmkeys --import http://yum.puppetlabs.com/RPM-GPG-KEY-puppet
+<%= bin_path %>/puppet resource service puppet enable=true
 <% end -%>
 
 cat > <%= etc_path %>/puppet.conf << EOF
