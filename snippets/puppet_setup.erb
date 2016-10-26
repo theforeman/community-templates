@@ -52,6 +52,9 @@ puppet_unit=puppet
 <% end -%>
 /sbin/chkconfig --level 345 puppet on
 <% end -%>
+<% if os_family == 'Freebsd' -%>
+echo 'puppet_enable="YES"' >>/etc/rc.conf
+<% end -%>
 <% unless @host.param_true?('enable-puppetlabs-pc1-repo') -%>
 <% if os_family == 'Debian' -%>
 if [ -f "/etc/default/puppet" ]
@@ -59,8 +62,6 @@ then
 /bin/sed -i 's/^START=no/START=yes/' /etc/default/puppet
 fi
 <%= bin_path %>/puppet agent --enable
-<% elsif os_family == 'Freebsd' -%>
-echo 'puppet_enable="YES"' >>/etc/rc.conf
 <% elsif os_family == 'Suse' -%>
 if [ -f "/etc/sysconfig/puppet" ]
 then
