@@ -22,6 +22,7 @@ This template accepts the following parameters:
 - bootloader-append: string (default="nofb quiet splash=quiet")
 - disable-firewall: boolean (default=false)
 - package_upgrade: boolean (default=true)
+- disable-uek: boolean (default=false)
 %>
 <%
   rhel_compatible = @host.operatingsystem.family == 'Redhat' && @host.operatingsystem.name != 'Fedora'
@@ -205,6 +206,12 @@ fi
 
 <% if salt_enabled %>
 <%= snippet 'saltstack_setup' %>
+<% end -%>
+
+<% if @host.operatingsystem.name == 'OracleLinux' && @host.param_true?('disable-uek') -%>
+# Uninstall the Oracle Unbreakable Kernel packages
+yum -t -y remove kernel-uek*
+sed -e 's/DEFAULTKERNEL=kernel-uek/DEFAULTKERNEL=kernel/g' -i /etc/sysconfig/kernel
 <% end -%>
 
 sync
