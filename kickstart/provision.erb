@@ -95,6 +95,10 @@ repo --name=puppetlabs-pc1 --baseurl=http://yum.puppetlabs.com/el/<%= @host.oper
 <% end -%>
 <% end -%>
 
+<% if @host.operatingsystem.name == 'OracleLinux' && os_major == 7 -%>
+repo --name="Server-Mysql"
+<% end -%>
+
 <% if @host.operatingsystem.name == 'Fedora' and os_major <= 16 -%>
 # Bootloader exception for Fedora 16:
 bootloader --append="<%= @host.params['bootloader-append'] || 'nofb quiet splash=quiet' %> <%=ks_console%>" <%= grub_pass %>
