@@ -20,8 +20,8 @@ service network restart
 
 <%
   rhel_compatible = @host.operatingsystem.family == 'Redhat' && @host.operatingsystem.name != 'Fedora'
-  os_major = @host.operatingsystem.major.to_i
   pm_set = @host.puppetmaster.empty? ? false : true
+  proxy_uri = @host.params['http-proxy'] ? "http://#{@host.params['http-proxy']}:#{@host.params['http-proxy-port']}" : nil
   puppet_enabled = pm_set || @host.param_true?('force-puppet')
   salt_enabled = @host.params['salt_master'] ? true : false
   chef_enabled = @host.respond_to?(:chef_proxy) && @host.chef_proxy
@@ -32,14 +32,20 @@ service network restart
 echo 'root:<%= root_pass -%>' | /usr/sbin/chpasswd -e
 <% end -%>
 
-<% if rhel_compatible -%>
-<%= snippet 'epel' -%>
+<% if proxy_uri -%>
+# Yum proxy
+echo 'proxy = <%= proxy_uri %>' >> /etc/yum.conf
 <% end -%>
 
 #update local time
 echo "updating system time"
+yum -y install ntpdate
 /usr/sbin/ntpdate -sub <%= @host.params['ntp-server'] || '0.fedora.pool.ntp.org' %>
 /usr/sbin/hwclock --systohc
+
+<% if rhel_compatible && !@host.param_false?('enable-epel') -%>
+<%= snippet 'epel' -%>
+<% end -%>
 
 <% if @host.info['parameters']['realm'] && @host.realm && @host.realm.realm_type == 'FreeIPA' -%>
 <%= snippet 'freeipa_register' %>
@@ -61,7 +67,9 @@ fi
 <% end -%>
 
 <% if puppet_enabled %>
+<% if @host.param_true?('enable-puppetlabs-pc1-repo') || @host.param_true?('enable-puppetlabs-repo') -%>
 <%= snippet 'puppetlabs_repo' %>
+<% end -%>
 <%= snippet 'puppet_setup' %>
 <% end -%>
 
