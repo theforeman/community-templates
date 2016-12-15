@@ -25,5 +25,6 @@ The templates use some Host Parameters to contol the flow of the template. These
 * `enable-saltstack-repo`: Add the SaltStack APT repo to the APT sources during install (default: `false`)
 * `salt_master`: SaltStack Master (default: empty)
 * `salt_grains`: Salt client specific information, like facter (default: empty)
+* `preseed-update-policy`: Preseed policy for applying updates to running systems. Can be `none`, `unattended-upgrades`, or `landscape`. (default: unattended-upgrades)
 
 Detailed description is available at https://www.debian.org/releases/stable/amd64/apbs04.html.en
