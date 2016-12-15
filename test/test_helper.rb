@@ -1,12 +1,31 @@
 require 'erb'
 require 'tempfile'
 
-DISKLAYOUT = <<DL
-zerombr
-clearpart --all --initlabel
-part / --fstype=ext4 --size=1024 --grow
-part swap  --recommended
-DL
+class PartitioningHelper
+  attr_reader :disk_layout
+  def initialize(family)
+    @disk_layout = case family
+                   when 'Redhat'
+                     kickstart
+                   when 'Debian'
+                     preseed
+                   end
+  end
+
+  def kickstart
+    part = <<-DL
+      zerombr
+      clearpart --all --initlabel
+      part / --fstype=ext4 --size=1024 --grow
+      part swap  --recommended
+      DL
+    part
+  end
+
+  def preseed
+    ''
+  end
+end
 
 class FakeStruct
   def initialize(hash)
@@ -34,8 +53,8 @@ class FakeStruct
 end
 
 class FakeNamespace
-  attr_reader :root_pass, :grub_pass
-  def initialize(family, name, major, minor)
+  attr_reader :root_pass, :grub_pass, :host
+  def initialize(family, name, major, minor, release = nil)
     @mediapath = 'url --url http://localhost/repo/xyz'
     @root_pass = '$1$redhat$9yxjZID8FYVlQzHGhasqW/'
     @grub_pass = 'blah'
@@ -46,10 +65,12 @@ class FakeNamespace
         :major => major,
         :minor => minor,
         :as_string => name,
+        :release_name => release,
         :password_hash => 'SHA512'
       ),
       :architecture => 'x86_64',
-      :diskLayout => DISKLAYOUT,
+      :domain => 'example.com',
+      :diskLayout => PartitioningHelper.new(family).disk_layout,
       :puppetmaster => 'http://localhost',
       :params => {
         'enable-puppetlabs-repo' => 'true'
@@ -97,15 +118,25 @@ module TemplatesHelper
     [$?.to_i, output]
   end
 
+  def debconfsetsel(preseed)
+    debconfset_cmd = ENV['DEBCONFSETSEL'] || 'debconf-set-selections'
+    output = `#{debconfset_cmd} --checkonly #{preseed}`
+    [$?.to_i, output]
+  end
+
   def validate_erb(template, namespace, ksversion)
     t = Tempfile.new('community-templates-validate')
     t.write(render_erb(template, namespace))
     t.close
-    ksvalidator(ksversion, t.path)
+    case namespace.host.operatingsystem.family
+    when 'Redhat'
+      ksvalidator(ksversion, t.path)
+    when 'Debian'
+      debconfsetsel(t.path)
+    end
   ensure
     t.unlink
   end
-
 end
 
 class String

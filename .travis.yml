@@ -1,6 +1,10 @@
 sudo: false
 language: ruby
 rvm: 1.9.3
+addons:
+  apt:
+    packages:
+      - debconf
 install:
   - pip install --user six requests
   - git clone --depth 1 -b r2.20-1 git://github.com/rhinstaller/pykickstart.git
