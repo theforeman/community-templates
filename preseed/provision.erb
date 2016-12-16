@@ -77,7 +77,7 @@ d-i clock-setup/ntp-server string <%= @host.params['ntp-server'] || '0.debian.po
 # User settings
 d-i passwd/root-password-crypted password <%= root_pass %>
 user-setup-udeb passwd/root-login boolean true
-d-i passwd passwd/make-user boolean false
+d-i passwd/make-user boolean false
 user-setup-udeb passwd/make-user boolean false
 
 <% repos = 0 %>
