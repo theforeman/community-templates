@@ -26,5 +26,6 @@ The templates use some Host Parameters to contol the flow of the template. These
 * `salt_master`: SaltStack Master (default: empty)
 * `salt_grains`: Salt client specific information, like facter (default: empty)
 * `preseed-update-policy`: Preseed policy for applying updates to running systems. Can be `none`, `unattended-upgrades`, or `landscape`. (default: unattended-upgrades)
+* `preseed-post-install-upgrade`: Upgrade Debian post installation. Can be `none`, `safe-upgrade`, or `full-upgrade`. (default: none)
 
 Detailed description is available at https://www.debian.org/releases/stable/amd64/apbs04.html.en
