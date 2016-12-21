@@ -52,6 +52,11 @@ d-i netcfg/wireless_wep string
 
 d-i hw-detect/load_firmware boolean true
 
+<% if @host.param_true?('preseed-live-installer') -%>
+# Offline live-installer location
+d-i live-installer/net-image string http://<%= @preseed_server %><%= @preseed_path %>/install/filesystem.squashfs
+<% end -%>
+
 # Mirror settings
 d-i mirror/country string manual
 d-i mirror/http/hostname string <%= @preseed_server %>
