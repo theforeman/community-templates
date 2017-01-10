@@ -1,0 +1,19 @@
+<%#
+name: Start OpenSCAP scans
+job_category: OpenSCAP
+description_format: Check all OpenSCAP policices, you must have OpenSCAP plugin setup in order for this template to work
+snippet: false
+template_inputs:
+- name: policies
+  required: false
+  input_type: puppet_parameter
+  puppet_class_name: foreman_scap_client
+  puppet_parameter_name: policies
+  advanced: false
+provider_type: SSH
+kind: job_template
+%>
+
+<% input('policies').map { |policy_config| policy_config['id'] }.each do |id| -%>
+/usr/bin/foreman_scap_client <%= id %>
+<% end -%>
