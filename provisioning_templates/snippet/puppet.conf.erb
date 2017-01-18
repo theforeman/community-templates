@@ -6,7 +6,7 @@ name: puppet.conf
   os_family = @host.operatingsystem.family
   os_name   = @host.operatingsystem.name
 
-  if @host.param_true?('enable-puppetlabs-pc1-repo') && (os_family == 'Debian' || os_family == 'Redhat' || os_name == 'SLES')
+  if host_param_true?('enable-puppetlabs-pc1-repo') && (os_family == 'Debian' || os_family == 'Redhat' || os_name == 'SLES')
     var_dir = '/opt/puppetlabs/puppet/cache'
     log_dir = '/var/log/puppetlabs/puppet'
     run_dir = '/var/run/puppetlabs'
@@ -28,8 +28,8 @@ name: puppet.conf
   end
 %>
 [main]
-<%- unless @host.params['dns_alt_names'].to_s.empty? -%>
-dns_alt_names = <%= @host.params['dns_alt_names'] %>
+<%- unless host_param('dns_alt_names').to_s.empty? -%>
+dns_alt_names = <%= host_param('dns_alt_names') %>
 <%- end -%>
 vardir = <%= var_dir %>
 logdir = <%= log_dir %>

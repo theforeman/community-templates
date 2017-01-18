@@ -3,9 +3,9 @@ kind: snippet
 name: puppetlabs_repo
 -%>
 <%
-http_proxy   = @host.params['http-proxy'] ? " --httpproxy #{@host.params['http-proxy']}" : nil
-http_port    = @host.params['http-proxy-port'] ? " --httpport #{@host.params['http-proxy-port']}" : nil
-proxy_uri    = @host.params['http-proxy'] ? "http://#{@host.params['http-proxy']}:#{@host.params['http-proxy-port']}" : nil
+http_proxy   = host_param('http-proxy') ? " --httpproxy #{host_param('http-proxy')}" : nil
+http_port    = host_param('http-proxy-port') ? " --httpport #{host_param('http-proxy-port')}" : nil
+proxy_uri    = host_param('http-proxy') ? "http://#{host_param('http-proxy')}:#{host_param('http-proxy-port')}" : nil
 proxy_string = proxy_uri ? " -e https_proxy=#{proxy_uri}/" : ''
 proxy_string_bits = proxy_uri ? " -ProxyUsage Override -ProxyList #{proxy_uri}" : ''
 os_family = @host.operatingsystem.family
@@ -30,9 +30,9 @@ elsif os_family == 'Windows'
   repo_os = 'windows'
 end
 
-if @host.param_true?('enable-puppetlabs-repo')
+if host_param_true?('enable-puppetlabs-repo')
   repo_name = 'puppetlabs-release'
-elsif @host.param_true?('enable-puppetlabs-pc1-repo')
+elsif host_param_true?('enable-puppetlabs-pc1-repo')
   repo_name = 'puppetlabs-release-pc1'
 end
 -%>

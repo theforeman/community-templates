@@ -6,18 +6,18 @@ oses:
 - Ubuntu
 %>
 <%
-  partitioning_method = @host.params['partitioning-method'] ? @host.params['partitioning-method'] : 'lvm'
-  partitioning_recipe = @host.params['partitioning-recipe'] ? @host.params['partitioning-recipe'] : 'multi'
-  partitioning_expert_recipe = @host.params['partitioning-expert-recipe'] ? @host.params['partitioning-expert-recipe'] : ''
-  vg_name = @host.params['partitioning-vg-name'] ? @host.params['partitioning-vg-name'] : 'vg00'
-  partitioning_filesystem = @host.params['partitioning-filesystem'] ? @host.params['partitioning-filesystem'] : ''
-  partitioning_crypto_erase = @host.params['partitioning-crypto-erase'] ? @host.params['partitioning-crypto-erase'] : 'false'
-  partitioning_crypto_password = @host.params['partitioning-crypto-password'] ? @host.params['partitioning-crypto-password'] : 'temporarypassword'
-  partitioning_crypto_password_weak = @host.params['partitioning-crypto-password-weak'] ? @host.params['partitioning-crypto-password-weak'] : 'false'
+  partitioning_method = host_param('partitioning-method') ? host_param('partitioning-method') : 'lvm'
+  partitioning_recipe = host_param('partitioning-recipe') ? host_param('partitioning-recipe') : 'multi'
+  partitioning_expert_recipe = host_param('partitioning-expert-recipe') ? host_param('partitioning-expert-recipe') : ''
+  vg_name = host_param('partitioning-vg-name') ? host_param('partitioning-vg-name') : 'vg00'
+  partitioning_filesystem = host_param('partitioning-filesystem') ? host_param('partitioning-filesystem') : ''
+  partitioning_crypto_erase = host_param('partitioning-crypto-erase') ? host_param('partitioning-crypto-erase') : 'false'
+  partitioning_crypto_password = host_param('partitioning-crypto-password') ? host_param('partitioning-crypto-password') : 'temporarypassword'
+  partitioning_crypto_password_weak = host_param('partitioning-crypto-password-weak') ? host_param('partitioning-crypto-password-weak') : 'false'
 -%>
 
-<% if @host.params['install-disk'] -%>
-d-i partman-auto/disk string <%= @host.params['install-disk'] %>
+<% if host_param('install-disk') -%>
+d-i partman-auto/disk string <%= host_param('install-disk') %>
 <% else -%>
 # Use the first detected hard disk as default installation disk
 d-i partman/early_command string debconf-set partman-auto/disk "$(list-devices disk | head -n1)"
