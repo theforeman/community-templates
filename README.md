@@ -44,6 +44,84 @@ To start unit tests do something like:
 
 Please fork and send a pull request. Thanks!
 
+# Notes for various templates
+
+## CoreOS
+
+The templates use some Host Parameters to contol the flow of the template. These are:
+
+- install-disk: What device to install to (default: /dev/sda | /dev/vda)
+- ssh_authorized_keys: add public SSH keys which will be authorized for the core user. You can specify multiple SSH keys seperated with a "," (default: empty)
+- etcd_discovery_url: provision a discovery token for etcd to allow a simple cluster deployment. You can get a new discovery token at <https://discovery.etcd.io/new>. This parameter is used in the [coreos_cloudconfig snippet](https://github.com/theforeman/community-templates/blob/develop/snippets/coreos_cloudconfig.erb). (default: empty)
+- expose_docker_socket: if you want to have an exposed Docker TCP socket set this to "true"
+- enable_etcd: if you don't require the etcd (and fleet) service, set this to "false" (default: true)
+- reboot-strategy: set the reboot-strategy for CoreOS, for more information have a look at the official [documentation](https://coreos.com/os/docs/latest/update-strategies.html)
+
+If you don't add any SSH keys you can login with the core user using the root password.
+
+More Information are available on the [CoreOS site](https://coreos.com/docs/cluster-management/setup/cloudinit-cloud-config)
+
+## Kickstart
+
+### Kickstart Files
+
+There is one [kickstart](provisioning_templates/provision/kickstart_default.erb) and accompanying [PXE config](provisioning_templates/PXELinux/kickstart_default_pxelinux.erb),
+which works for:
+
+Fedora 16
+Fedora 17
+Fedora 18
+Fedora 19
+Fedora 20
+RHEL, CentOS 5.9
+RHEL, CentOS 6.3
+
+## Poap
+
+Cisco NX-OS PowerOn Auto Provisioning (POAP) support
+
+More information is available here: http://projects.theforeman.org/issues/10526
+
+## Preseed
+
+Tested on:
+
+* Ubuntu 10.04 (lucid)
+* Ubuntu 12.04 (precise)
+* Ubuntu 13.04 (raring)
+* Ubuntu 14.04 (trusty)
+* Debian 6.0 (Squeeze)
+* Debian 7 (Wheezy)
+* Debian 8 (Jessie)
+
+### Host Parameters
+
+The templates use some Host Parameters to contol the flow of the template. These are:
+
+* `install-disk`: What device to install to (default: the first disk returned with `list-devices disk`)
+* `partitioning-method`: `regular` (default for `Preseed default`), `lvm` (default for `Preseed default lvm`) or `crypto`
+* `partitioning-recipe`: `atomic` (default for `Preseed default`), `home`, or `multi` (default for `Preseed default lvm`)
+* `partitioning-expert-recipe`: Entire recipe (default: empty, i.e `partitioning-recipe`)
+* `partitioning-vg-name`: LVM volume group name (default: `vg01` for `Preseed default lvm`)
+* `partitioning-filesystem`: One of `ext4`, `ext4`, `btrfs`, ... (default: empty, the default is used)
+* `enable-puppetlabs-repo`: Add the Puppet Labs APT repo to the APT sources during install (default: `false`)
+* `enable-puppetlabs-pc1-repo`: Add the Puppet Labs PC1 APT repo to the APT sources during install (default: `false`)
+* `enable-saltstack-repo`: Add the SaltStack APT repo to the APT sources during install (default: `false`)
+* `salt_master`: SaltStack Master (default: empty)
+* `salt_grains`: Salt client specific information, like facter (default: empty)
+* `preseed-update-policy`: Preseed policy for applying updates to running systems. Can be `none`, `unattended-upgrades`, or `landscape`. (default: unattended-upgrades)
+* `preseed-live-installer`: Informs the installer that the installation source is from an iso. Can be `true` or `false`. (defaults: notset/false)
+* `preseed-kernel-image`: Specify the kernel-image to install. Ex: `linux-image-generic-lts-xenial` or `linux-image-4.4.0-34-generic`. (default: empty)
+* `preseed-post-install-upgrade`: Upgrade Debian post installation. Can be `none`, `safe-upgrade`, or `full-upgrade`. (default: none)
+
+Detailed description is available at https://www.debian.org/releases/stable/amd64/apbs04.html.en
+
+## ZTP
+
+Junos Zero-Touch-Provisioning support
+
+More information is available here: http://projects.theforeman.org/issues/3906
+
 # License
 
 Copyrights are retained by their owners

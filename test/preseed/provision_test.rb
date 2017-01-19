@@ -12,19 +12,23 @@ class TestPreseedProvision < MiniTest::Unit::TestCase
     assert_equal code, 0
   end
 
+  def preseed_path
+    'provisioning_templates/provision/'
+  end
+
   def test_ubuntu_16_04
-    validate_distro('preseed/provision.erb', 'Debian', 'Ubuntu', '16', '04', 'xenial')
+    validate_distro(preseed_path + '/preseed_default.erb', 'Debian', 'Ubuntu', '16', '04', 'xenial')
   end
 
   def test_ubuntu_14_04
-    validate_distro('preseed/provision.erb', 'Debian', 'Ubuntu', '14', '04', 'trusty')
+    validate_distro(preseed_path + '/preseed_default.erb', 'Debian', 'Ubuntu', '14', '04', 'trusty')
   end
 
   def test_debian_8_6
-    validate_distro('preseed/provision.erb', 'Debian', 'Debian', '8', '6', 'jessie')
+    validate_distro(preseed_path + '/preseed_default.erb', 'Debian', 'Debian', '8', '6', 'jessie')
   end
 
   def test_debian_7_11
-    validate_distro('preseed/provision.erb', 'Debian', 'Debian', '7', '11', 'wheezy')
+    validate_distro(preseed_path + '/preseed_default.erb', 'Debian', 'Debian', '7', '11', 'wheezy')
   end
 end
