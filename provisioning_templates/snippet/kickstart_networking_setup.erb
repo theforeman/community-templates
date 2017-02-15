@@ -30,7 +30,7 @@ IPV6INIT=yes
 IPV6_AUTOCONF=no
 IPV6ADDR=<%= @host.ip6 %>
 <% if subnet6 && subnet6.gateway.present? -%>
-IPV6_DEFAULTGW=<%= subnet6.gateway %>
+IPV6_DEFAULTGW=<%= subnet6.gateway %><%= '%$real' if subnet6.gateway.match(/^fe80:/) %>
 <% end -%>
 IPV6_PEERDNS=no
 <% end -%>
@@ -66,7 +66,7 @@ IPV6INIT=yes
 IPV6_AUTOCONF=no
 IPV6ADDR=<%= bond.ip6 %>
 <% if subnet6 && subnet6.gateway.present? -%>
-IPV6_DEFAULTGW=<%= subnet6.gateway %>
+IPV6_DEFAULTGW=<%= subnet6.gateway %><%= '%$real' if subnet6.gateway.match(/^fe80:/) %>
 <% end -%>
 IPV6_PEERDNS=no
 <% end -%>
@@ -187,7 +187,7 @@ IPV6INIT=yes
 IPV6_AUTOCONF=no
 IPV6ADDR=<%= @host.ip6 %>
 <% if subnet6 && subnet6.gateway.present? -%>
-IPV6_DEFAULTGW=<%= subnet6.gateway %>
+IPV6_DEFAULTGW=<%= subnet6.gateway %><%= '%$real' if subnet6.gateway.match(/^fe80:/) %>
 <% end -%>
 IPV6_PEERDNS=no
 <% end -%>
