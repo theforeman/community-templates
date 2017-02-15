@@ -182,10 +182,10 @@ PEERDNS=no
 PEERROUTES=no
 DEFROUTE=no
 <% end -%>
-<% if @host.ip6.present? -%>
+<% if interface.ip6.present? -%>
 IPV6INIT=yes
 IPV6_AUTOCONF=no
-IPV6ADDR=<%= @host.ip6 %>
+IPV6ADDR=<%= interface.ip6 %>
 <% if subnet6 && subnet6.gateway.present? -%>
 IPV6_DEFAULTGW=<%= subnet6.gateway %><%= '%$real' if subnet6.gateway.match(/^fe80:/) %>
 <% end -%>
