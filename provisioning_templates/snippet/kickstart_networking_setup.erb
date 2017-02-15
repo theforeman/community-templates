@@ -18,10 +18,12 @@ real=`ip -o link | grep <%= @host.mac -%> | awk '{print $2;}' | sed s/://`
 cat << EOF > /etc/sysconfig/network-scripts/ifcfg-$real
 BOOTPROTO="<%= dhcp ? 'dhcp' : 'none' -%>"
 <% unless dhcp -%>
+<% if @host.ip.present? -%>
 IPADDR="<%= @host.ip -%>"
 NETMASK="<%= subnet.mask -%>"
 <% if subnet && subnet.gateway.present? -%>
 GATEWAY="<%= subnet.gateway %>"
+<% end -%>
 <% end -%>
 <% if @host.ip6.present? -%>
 IPV6INIT=yes
@@ -51,10 +53,13 @@ real="<%= bond.identifier -%>"
 cat << EOF > /etc/sysconfig/network-scripts/ifcfg-$real
 BOOTPROTO="<%= dhcp ? 'dhcp' : 'none' -%>"
 <% unless dhcp || subnet.nil? -%>
+<% if interface.ip.present? -%>
 IPADDR="<%= bond.ip -%>"
 NETMASK="<%= subnet.mask -%>"
 <% if subnet && subnet.gateway.present? -%>
 GATEWAY="<%= subnet.gateway %>"
+<% end -%>
+<% end -%>
 <% end -%>
 <% if bond.ip6.present? -%>
 IPV6INIT=yes
@@ -64,7 +69,6 @@ IPV6ADDR=<%= bond.ip6 %>
 IPV6_DEFAULTGW=<%= subnet6.gateway %>
 <% end -%>
 IPV6_PEERDNS=no
-<% end -%>
 <% end -%>
 DEVICE=$real
 ONBOOT=yes
@@ -150,10 +154,12 @@ sanitized_real=$real
 cat << EOF > /etc/sysconfig/network-scripts/ifcfg-$sanitized_real
 BOOTPROTO="<%= dhcp ? 'dhcp' : 'none' -%>"
 <% unless dhcp -%>
+<% if interface.ip.present? -%>
 IPADDR="<%= interface.ip -%>"
 NETMASK="<%= subnet.mask -%>"
 <% if subnet && subnet.gateway.present? -%>
 GATEWAY="<%= subnet.gateway %>"
+<% end -%>
 <% end -%>
 <% end -%>
 DEVICE=$real
