@@ -64,16 +64,6 @@ services --disabled gpm,sendmail,cups,pcmcia,isdn,rawdevices,hpoj,bluetooth,open
 realm join --one-time-password='<%= @host.otp || "$HOST[OTP]" %>' <%= @host.realm %>
 <% end -%>
 
-<% if puppet_enabled -%>
-<% if @host.param_true?('enable-puppetlabs-repo') -%>
-repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/products/<%= @host.architecture %><%= proxy_string %>
-repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/dependencies/<%= @host.architecture %><%= proxy_string %>
-<% end -%>
-<% if @host.param_true?('enable-puppetlabs-pc1-repo') -%>
-repo --name=puppetlabs-pc1 --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/PC1/<%= @host.architecture %><%= proxy_string %>
-<% end -%>
-<% end -%>
-
 bootloader --location=mbr --append="<%= @host.params['bootloader-append'] || 'nofb quiet splash=quiet' %>" <%= grub_pass %>
 <% if os_major == 5 -%>
 key --skip
@@ -96,14 +86,6 @@ wget
 @Core
 <% if os_major >= 6 -%>
 redhat-lsb-core
-<% end -%>
-<% if puppet_enabled -%>
-<% if @host.param_true?('enable-puppetlabs-repo') -%>
-puppetlabs-release
-<% end -%>
-<% if @host.param_true?('enable-puppetlabs-pc1-repo') -%>
-puppetlabs-release-pc1
-<% end -%>
 <% end -%>
 <% if salt_enabled %>
 salt-minion
@@ -172,6 +154,9 @@ fi
 <% end -%>
 
 <% if puppet_enabled %>
+<% if @host.param_true?('enable-puppetlabs-pc1-repo') || @host.param_true?('enable-puppetlabs-repo') -%>
+<%= snippet 'puppetlabs_repo' %>
+<% end -%>
 <%= snippet 'puppet_setup' %>
 <% end -%>
 
