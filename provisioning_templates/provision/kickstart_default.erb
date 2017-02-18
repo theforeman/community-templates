@@ -81,9 +81,6 @@ repo --name=puppetlabs-pc1 --baseurl=http://yum.puppetlabs.com/fedora/f<%= @host
 <% end -%>
 <% end -%>
 <% elsif rhel_compatible -%>
-<% unless @host.param_false?('enable-epel') -%>
-repo --name="EPEL" --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %><%= proxy_string %>
-<% end -%>
 <% if puppet_enabled -%>
 <% if @host.param_true?('enable-puppetlabs-repo') -%>
 repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/products/<%= @host.architecture %><%= proxy_string %>
@@ -131,9 +128,6 @@ wget
 @Core
 <% if os_major >= 6 -%>
 redhat-lsb-core
-<% end -%>
-<% if rhel_compatible && !@host.param_false?('enable-epel') -%>
-epel-release
 <% end -%>
 <% if puppet_enabled -%>
 <%= @host.param_true?('enable-puppetlabs-pc1-repo') ? 'puppet-agent' : 'puppet' %>
@@ -183,6 +177,10 @@ echo "updating system time"
 <% if proxy_uri -%>
 # Yum proxy
 echo 'proxy = <%= proxy_uri %>' >> /etc/yum.conf
+<% end -%>
+
+<% if rhel_compatible && !@host.param_false?('enable-epel') -%>
+<%= snippet 'epel' -%>
 <% end -%>
 
 <% if @host.info['parameters']['realm'] && @host.realm && @host.realm.realm_type == 'FreeIPA' -%>

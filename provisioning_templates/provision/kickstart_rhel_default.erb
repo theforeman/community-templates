@@ -64,9 +64,6 @@ services --disabled gpm,sendmail,cups,pcmcia,isdn,rawdevices,hpoj,bluetooth,open
 realm join --one-time-password='<%= @host.otp || "$HOST[OTP]" %>' <%= @host.realm %>
 <% end -%>
 
-<% unless @host.param_false?('enable-epel') -%>
-repo --name="EPEL" --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %><%= proxy_string %>
-<% end -%>
 <% if puppet_enabled -%>
 <% if @host.param_true?('enable-puppetlabs-repo') -%>
 repo --name=puppetlabs-products --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/products/<%= @host.architecture %><%= proxy_string %>
@@ -99,9 +96,6 @@ wget
 @Core
 <% if os_major >= 6 -%>
 redhat-lsb-core
-<% end -%>
-<% if !@host.param_false?('enable-epel') -%>
-epel-release
 <% end -%>
 <% if puppet_enabled -%>
 <% if @host.param_true?('enable-puppetlabs-repo') -%>
@@ -150,6 +144,10 @@ echo "updating system time"
 <% if proxy_uri -%>
 # Yum proxy
 echo 'proxy = <%= proxy_uri %>' >> /etc/yum.conf
+<% end -%>
+
+<% unless @host.param_false?('enable-epel') -%>
+<%= snippet 'epel' -%>
 <% end -%>
 
 <%= snippet 'redhat_register' %>
