@@ -57,16 +57,13 @@ firewall --<%= os_major >= 6 ? 'service=' : '' %>ssh
 <% end -%>
 authconfig --useshadow --passalgo=<%= @host.operatingsystem.password_hash || 'sha256' %> --kickstart
 timezone --utc <%= @host.params['time-zone'] || 'UTC' %>
-<% if os_major > 4 -%>
 services --disabled gpm,sendmail,cups,pcmcia,isdn,rawdevices,hpoj,bluetooth,openibd,avahi-daemon,avahi-dnsconfd,hidd,hplip,pcscd
-<% end -%>
 
 <% if realm_compatible && @host.info['parameters']['realm'] && @host.realm && @host.realm.realm_type == 'Active Directory' -%>
 # One-time password will be requested at install time. Otherwise, $HOST[OTP] is used as a placeholder value.
 realm join --one-time-password='<%= @host.otp || "$HOST[OTP]" %>' <%= @host.realm %>
 <% end -%>
 
-<% if os_major > 4 -%>
 <% unless @host.param_false?('enable-epel') -%>
 repo --name="EPEL" --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %><%= proxy_string %>
 <% end -%>
@@ -77,7 +74,6 @@ repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/el/<%= @host.ope
 <% end -%>
 <% if @host.param_true?('enable-puppetlabs-pc1-repo') -%>
 repo --name=puppetlabs-pc1 --baseurl=http://yum.puppetlabs.com/el/<%= @host.operatingsystem.major %>/PC1/<%= @host.architecture %><%= proxy_string %>
-<% end -%>
 <% end -%>
 <% end -%>
 
@@ -104,7 +100,7 @@ wget
 <% if os_major >= 6 -%>
 redhat-lsb-core
 <% end -%>
-<% if os_major > 4 && !@host.param_false?('enable-epel') -%>
+<% if !@host.param_false?('enable-epel') -%>
 epel-release
 <% end -%>
 <% if puppet_enabled -%>

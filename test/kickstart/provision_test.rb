@@ -40,10 +40,6 @@ class TestKickstartProvision < MiniTest::Unit::TestCase
     validate_distro(kickstart_path + '/kickstart_default.erb', 'Redhat', 'Fedora', '20', '', 'F20')
   end
 
-  def test_centos_4
-    validate_distro(kickstart_path + '/kickstart_default.erb', 'Redhat', 'CentOS', '4', '0', 'RHEL4')
-  end
-
   def test_centos_5
     validate_distro(kickstart_path + '/kickstart_default.erb', 'Redhat', 'CentOS', '5', '0', 'RHEL5')
   end
@@ -54,10 +50,6 @@ class TestKickstartProvision < MiniTest::Unit::TestCase
 
   def test_centos_7
     validate_distro(kickstart_path + '/kickstart_default.erb', 'Redhat', 'CentOS', '7', '0', 'RHEL7')
-  end
-
-  def test_rhel_4
-    validate_distro(kickstart_path + '/kickstart_rhel_default.erb', 'Redhat', 'RHEL', '4', '0', 'RHEL4')
   end
 
   def test_rhel_5

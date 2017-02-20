@@ -60,7 +60,7 @@ firewall --<%= os_major >= 6 ? 'service=' : '' %>ssh
 <% end -%>
 authconfig --useshadow --passalgo=<%= @host.operatingsystem.password_hash || 'sha256' %> --kickstart
 timezone --utc <%= @host.params['time-zone'] || 'UTC' %>
-<% if rhel_compatible && os_major > 4 -%>
+<% if rhel_compatible -%>
 services --disabled gpm,sendmail,cups,pcmcia,isdn,rawdevices,hpoj,bluetooth,openibd,avahi-daemon,avahi-dnsconfd,hidd,hplip,pcscd
 <% end -%>
 
@@ -80,7 +80,7 @@ repo --name=puppetlabs-deps --baseurl=http://yum.puppetlabs.com/fedora/f<%= @hos
 repo --name=puppetlabs-pc1 --baseurl=http://yum.puppetlabs.com/fedora/f<%= @host.operatingsystem.major %>/PC1/<%= @host.architecture %><%= proxy_string %>
 <% end -%>
 <% end -%>
-<% elsif rhel_compatible && os_major > 4 -%>
+<% elsif rhel_compatible -%>
 <% unless @host.param_false?('enable-epel') -%>
 repo --name="EPEL" --mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-<%= @host.operatingsystem.major %>&arch=<%= @host.architecture %><%= proxy_string %>
 <% end -%>
@@ -132,7 +132,7 @@ wget
 <% if os_major >= 6 -%>
 redhat-lsb-core
 <% end -%>
-<% if rhel_compatible && os_major > 4 && !@host.param_false?('enable-epel') -%>
+<% if rhel_compatible && !@host.param_false?('enable-epel') -%>
 epel-release
 <% end -%>
 <% if puppet_enabled -%>
