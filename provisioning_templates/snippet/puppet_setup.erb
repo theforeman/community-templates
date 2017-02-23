@@ -73,12 +73,6 @@ then
 fi
 <% end -%>
 <% end -%>
-<% if os_family == 'Suse' -%>
-<%= bin_path %>/puppet resource service puppet enable=true
-<% if @host.provision_method == 'image' -%>
-<%= bin_path %>/puppet resource service puppet ensure=running
-<% end -%>
-<% end -%>
 <%#
 IMPORTANT NOTE: Setting "run-puppet-in-installer" is UNSUPPORTED!
 
@@ -104,3 +98,9 @@ mkdir -p /run/systemd/system
 export FACTER_is_installer=true
 # passing a non-existent tag like "no_such_tag" to the puppet agent only initializes the node
 <%= bin_path %>/puppet agent --config <%= etc_path %>/puppet.conf --onetime <%= @host.param_true?('run-puppet-in-installer') ? '' : '--tags no_such_tag' %> <%= @host.puppetmaster.blank? ? '' : "--server #{@host.puppetmaster}" %> --no-daemonize
+<% if os_family == 'Suse' || (os_name == 'Debian' && os_major > 8) -%>
+<%= bin_path %>/puppet resource service puppet enable=true
+<% if @host.provision_method == 'image' -%>
+<%= bin_path %>/puppet resource service puppet ensure=running
+<% end -%>
+<% end -%>
