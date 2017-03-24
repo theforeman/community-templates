@@ -15,6 +15,7 @@ ONTIMEOUT local
 
 <%= snippet "pxelinux_discovery" %>
 
+<% unless @profiles.nil? -%>
 <% for profile in @profiles
   url = default_template_url(profile[:template], profile[:hostgroup])
   case profile[:pxe_type]
@@ -30,3 +31,4 @@ LABEL <%= "#{profile[:hostgroup]} - #{profile[:template]}" %>
   KERNEL <%= profile[:kernel] %>
   APPEND initrd=<%= profile[:initrd] %> <%= append %>
 <% end %>
+<% end -%>

@@ -11,6 +11,7 @@ timeout=20
 
 <%= snippet "pxegrub2_discovery" %>
 
+<% unless @profiles.nil? -%>
 <% for profile in @profiles
   url = default_template_url(profile[:template], profile[:hostgroup])
   case profile[:pxe_type]
@@ -27,3 +28,4 @@ menuentry '<%= "#{profile[:hostgroup]} - #{profile[:template]}" %>' {
   initrdefi <%= profile[:initrd] %>
 }
 <% end %>
+<% end -%>
