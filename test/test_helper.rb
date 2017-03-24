@@ -98,7 +98,24 @@ class FakeNamespace
       :subnet => FakeStruct.new(
         :dhcp_boot_mode? => true
       ),
-      :mac => '00:00:00:00:00:01'
+      :mac => '00:00:00:00:00:01',
+      :primary_interface => FakeStruct.new(
+        :identifier => 'eth0',
+        :subnet => FakeStruct.new(
+          :dhcp_boot_mode? => true
+        ),
+      ),
+     :managed_interfaces => [
+       FakeStruct.new(
+         :identifier => 'eth0',
+         :managed? => true,
+         :primary => true,
+         :ip => '1.2.3.4',
+         :subnet => FakeStruct.new(
+           :dhcp_boot_mode? => true
+         ),
+       ),
+     ]
     )
   end
 
