@@ -3,7 +3,7 @@ require 'minitest/autorun'
 require 'test_helper'
 require 'yaml'
 
-class TestHeaders < MiniTest::Unit::TestCase
+class TestHeaders < Minitest::Test
 
   def test_headers
     Dir.glob('**/*.erb') do |erb|

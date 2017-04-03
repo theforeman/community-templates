@@ -2,7 +2,7 @@ gem 'minitest'
 require 'minitest/autorun'
 require 'test_helper'
 
-class TestPreseedProvision < MiniTest::Unit::TestCase
+class TestPreseedProvision < Minitest::Test
   include TemplatesHelper
 
   def validate_distro(template, family, name, major, minor, release)

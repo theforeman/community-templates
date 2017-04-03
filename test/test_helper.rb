@@ -1,5 +1,6 @@
 require 'erb'
 require 'tempfile'
+require 'nokogiri'
 
 class PartitioningHelper
   attr_reader :disk_layout
@@ -9,6 +10,8 @@ class PartitioningHelper
                      kickstart
                    when 'Debian'
                      preseed
+                   when 'Suse'
+                     autoyast
                    end
   end
 
@@ -23,6 +26,10 @@ class PartitioningHelper
   end
 
   def preseed
+    ''
+  end
+
+  def autoyast
     ''
   end
 end
@@ -58,6 +65,8 @@ class FakeNamespace
     @mediapath = 'url --url http://localhost/repo/xyz'
     @root_pass = '$1$redhat$9yxjZID8FYVlQzHGhasqW/'
     @grub_pass = 'blah'
+    @dynamic = false,
+    @static = false,
     @host = FakeStruct.new(
       :operatingsystem => FakeStruct.new(
         :name => name,
@@ -68,6 +77,7 @@ class FakeNamespace
         :release_name => release,
         :password_hash => 'SHA512'
       ),
+      :name => 'hostname',
       :architecture => 'x86_64',
       :domain => 'example.com',
       :diskLayout => PartitioningHelper.new(family).disk_layout,
@@ -124,6 +134,12 @@ module TemplatesHelper
     [$?.to_i, output]
   end
 
+  def autoyastvalidator(autoyast)
+    xml = File.open(autoyast) { |f| Nokogiri::XML(f) }
+    xml_errors = xml.errors
+    [xml_errors.length, xml_errors]
+  end
+
   def validate_erb(template, namespace, ksversion)
     t = Tempfile.new('community-templates-validate')
     t.write(render_erb(template, namespace))
@@ -133,6 +149,8 @@ module TemplatesHelper
       ksvalidator(ksversion, t.path)
     when 'Debian'
       debconfsetsel(t.path)
+    when 'Suse'
+      autoyastvalidator(t.path)
     end
   ensure
     t.unlink

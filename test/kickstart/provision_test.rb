@@ -2,7 +2,7 @@ gem 'minitest'
 require 'minitest/autorun'
 require 'test_helper'
 
-class TestKickstartProvision < MiniTest::Unit::TestCase
+class TestKickstartProvision < Minitest::Test
   include TemplatesHelper
 
   def validate_distro(template, family, name, major, minor, ksversion)
