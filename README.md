@@ -38,7 +38,7 @@ of supported versions:
 
 To start unit tests do something like:
 
-    $ ruby -Itest test/kickstart/provision_test.rb 
+    $ ruby -Itest test/kickstart/provision_test.rb
 
 # Contributing
 
@@ -104,6 +104,9 @@ The templates use some Host Parameters to contol the flow of the template. These
 * `partitioning-expert-recipe`: Entire recipe (default: empty, i.e `partitioning-recipe`)
 * `partitioning-vg-name`: LVM volume group name (default: `vg01` for `Preseed default lvm`)
 * `partitioning-filesystem`: One of `ext4`, `ext4`, `btrfs`, ... (default: empty, the default is used)
+* `partitioning-crypto-erase`: Secure erase partition when using crypto method. `true` or `false` (default: `false`)
+* `partitioning-crypto-password`: Password for luks crypto method. Recommend changing this post install! (default: `temporarypassword`)
+* `partitioning-crypto-password-weak`: Allow weak passwords when using crypto. (default: `false`)
 * `enable-puppetlabs-repo`: Add the Puppet Labs APT repo to the APT sources during install (default: `false`)
 * `enable-puppetlabs-pc1-repo`: Add the Puppet Labs PC1 APT repo to the APT sources during install (default: `false`)
 * `enable-saltstack-repo`: Add the SaltStack APT repo to the APT sources during install (default: `false`)

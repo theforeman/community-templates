@@ -11,6 +11,9 @@ oses:
   partitioning_expert_recipe = @host.params['partitioning-expert-recipe'] ? @host.params['partitioning-expert-recipe'] : ''
   vg_name = @host.params['partitioning-vg-name'] ? @host.params['partitioning-vg-name'] : 'vg00'
   partitioning_filesystem = @host.params['partitioning-filesystem'] ? @host.params['partitioning-filesystem'] : ''
+  partitioning_crypto_erase = @host.params['partitioning-crypto-erase'] ? @host.params['partitioning-crypto-erase'] : 'false'
+  partitioning_crypto_password = @host.params['partitioning-crypto-password'] ? @host.params['partitioning-crypto-password'] : 'temporarypassword'
+  partitioning_crypto_password_weak = @host.params['partitioning-crypto-password-weak'] ? @host.params['partitioning-crypto-password-weak'] : 'false'
 -%>
 
 <% if @host.params['install-disk'] -%>
@@ -34,10 +37,16 @@ d-i partman-md/device_remove_md boolean true
 d-i partman-lvm/confirm boolean true
 d-i partman-lvm/confirm_nooverwrite boolean true
 
-<% if partitioning_method == 'lvm' -%>
+<% if partitioning_method == 'lvm' or partitioning_method == 'crypto' -%>
 # For LVM partitioning, you can select how much of the volume group to use
 # for logical volumes.
 d-i partman-auto-lvm/guided_size string max
+<% if partitioning_method == 'crypto' -%>
+d-i partman-crypto/erase_data boolean <%= partitioning_crypto_erase %>
+d-i partman-crypto/passphrase password <%= partitioning_crypto_password %>
+d-i partman-crypto/passphrase-again password <%= partitioning_crypto_password %>
+d-i partman-crypto/weak_passphrase boolean <%= partitioning_crypto_password_weak %>
+<% end -%>
 <% if vg_name != '' -%>
 d-i partman-auto-lvm/new_vg_name string <%= vg_name %>
 <% end -%>
