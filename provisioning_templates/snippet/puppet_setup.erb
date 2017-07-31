@@ -9,11 +9,11 @@ os_major  = @host.operatingsystem.major.to_i
 os_name   = @host.operatingsystem.name
 
 if os_family == 'Freebsd'
-  freebsd_package = host_param_true?('enable-puppet4') ? 'puppet4' : 'puppet38'
+  freebsd_package = 'puppet4'
   etc_path = '/usr/local/etc/puppet'
   bin_path = '/usr/local/bin'
 elsif os_family == 'Windows'
-  windows_package = "puppet-agent-#{@host.architecture}-latest.msi"
+  windows_package = "puppet-agent-#{@host.architecture}.msi"
   etc_path = 'C:\ProgramData\PuppetLabs\puppet\etc'
   bin_path = 'C:\Program Files\Puppet Labs\Puppet\bin'
 elsif host_param_true?('enable-puppetlabs-pc1-repo') || host_param_true?('enable-puppet4')
@@ -47,7 +47,7 @@ rpmkeys --import http://yum.puppetlabs.com/RPM-GPG-KEY-puppet
 /usr/bin/zypper -n install <%= linux_package %>
 <% end -%>
 <% elsif os_family == 'Windows' -%>
-$puppet_agent_msi = "${env:TEMP}\puppet-agent-<%= @host.architecture %>.msi"
+$puppet_agent_msi = "${env:TEMP}\<%= windows_package %>"
 $puppet_install_args = @(
   '/qn',
   '/norestart',
