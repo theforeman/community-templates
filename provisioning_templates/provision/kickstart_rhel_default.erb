@@ -165,6 +165,15 @@ fi
 <%= snippet 'saltstack_setup' %>
 <% end -%>
 
+# This is RHEL7 specific code, as it uses systemctl, replace with
+# chkconfig or an @boot cron if you run RHEL5 or RHEL6
+<% if realm_compatible && host_param_true?('ansible_tower_provisioning') %>
+<%= save_to_file('/etc/systemd/system/ansible-callback.service',
+                 snippet('ansible_tower_callback_service')) %>
+# Runs during first boot, removes itself
+/usr/bin/systemctl enable ansible-callback
+<% end -%>
+
 sync
 
 # Inform the build system that we are done.
