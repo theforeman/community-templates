@@ -1,6 +1,6 @@
 # Community Templates
 
-A place for us to colloborate around templates & snippets for various OSes
+A place for us to collaborate around templates & snippets for various OSes.
 
 # Repo metadata
 
