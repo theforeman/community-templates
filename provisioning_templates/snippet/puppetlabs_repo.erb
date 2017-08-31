@@ -34,11 +34,16 @@ if host_param_true?('enable-puppetlabs-repo')
   repo_name = 'puppetlabs-release'
 elsif host_param_true?('enable-puppetlabs-pc1-repo')
   repo_name = 'puppetlabs-release-pc1'
+elsif host_param_true?('enable-puppetlabs-puppet5-repo')
+  repo_name = 'puppet5-release'
 end
+
+repo_subdir = host_param_true?('enable-puppetlabs-puppet5-repo') ? 'puppet5/' : ''
 -%>
+
 <% if repo_name -%>
 <% if os_family == 'Redhat' || os_name == 'SLES' -%>
-rpm -Uvh<%= http_proxy %><%= http_port %> https://<%= repo_host %>/<%= repo_name %>-<%= repo_os %>-<%= os_major %>.noarch.rpm
+rpm -Uvh<%= http_proxy %><%= http_port %> https://<%= repo_host %>/<%= repo_subdir %><%= repo_name %>-<%= repo_os %>-<%= os_major %>.noarch.rpm
 <% elsif os_family == 'Debian' -%>
 apt-get update
 apt-get -y install ca-certificates

@@ -8,15 +8,17 @@ os_family = @host.operatingsystem.family
 os_major  = @host.operatingsystem.major.to_i
 os_name   = @host.operatingsystem.name
 
+aio_enabled = host_param_true?('enable-puppetlabs-puppet5-repo') || host_param_true?('enable-puppetlabs-pc1-repo') || host_param_true?('enable-puppet4') || host_param_true?('enable-puppet5')
+
 if os_family == 'Freebsd'
-  freebsd_package = 'puppet4'
+  freebsd_package = host_param_true?('enable-puppet5') ? 'puppet5' : 'puppet4'
   etc_path = '/usr/local/etc/puppet'
   bin_path = '/usr/local/bin'
 elsif os_family == 'Windows'
   windows_package = "puppet-agent-#{@host.architecture}.msi"
   etc_path = 'C:\ProgramData\PuppetLabs\puppet\etc'
   bin_path = 'C:\Program Files\Puppet Labs\Puppet\bin'
-elsif host_param_true?('enable-puppetlabs-pc1-repo') || host_param_true?('enable-puppet4')
+elsif aio_enabled
   linux_package = 'puppet-agent'
   etc_path = '/etc/puppetlabs/puppet'
   bin_path = '/opt/puppetlabs/bin'
@@ -39,7 +41,7 @@ else
   yum -t -y install <%= linux_package %>
 fi
 <% elsif os_family == 'Suse' -%>
-<% if host_param_true?('enable-puppetlabs-pc1-repo') -%>
+<% if host_param_true?('enable-puppetlabs-pc1-repo') || host_param_true?('enable-puppetlabs-puppet5-repo') -%>
 rpmkeys --import http://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs
 rpmkeys --import http://yum.puppetlabs.com/RPM-GPG-KEY-puppet
 <% end -%>
@@ -83,7 +85,7 @@ puppet_unit=puppet
 <% if os_family == 'Freebsd' -%>
 echo 'puppet_enable="YES"' >>/etc/rc.conf
 <% end -%>
-<% unless host_param_true?('enable-puppetlabs-pc1-repo') -%>
+<% unless aio_enabled -%>
 <% if os_family == 'Debian' -%>
 if [ -f "/etc/default/puppet" ]
 then
