@@ -79,8 +79,9 @@ EOF
 puppet_unit=puppet
 /usr/bin/systemctl list-unit-files | grep -q puppetagent && puppet_unit=puppetagent
 /usr/bin/systemctl enable ${puppet_unit}
-<% end -%>
+<% else -%>
 /sbin/chkconfig --level 345 puppet on
+<% end -%>
 <% end -%>
 <% if os_family == 'Freebsd' -%>
 echo 'puppet_enable="YES"' >>/etc/rc.conf
