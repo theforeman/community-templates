@@ -5,7 +5,7 @@ model: ProvisioningTemplate
 %>
 <%# Used to boot unknown hosts, do not associate or change the name. %>
 
-default=0
+default=<%= global_setting("default_pxe_item_global", "local") %>
 timeout=20
 
 # On Debian/Ubuntu grub2 does not have patch for loading MAC-based configs. Also due to bug
