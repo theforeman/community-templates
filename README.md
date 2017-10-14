@@ -107,6 +107,7 @@ The templates use some Host Parameters to contol the flow of the template. These
 * `partitioning-crypto-erase`: Secure erase partition when using crypto method. `true` or `false` (default: `false`)
 * `partitioning-crypto-password`: Password for luks crypto method. Recommend changing this post install! (default: `temporarypassword`)
 * `partitioning-crypto-password-weak`: Allow weak passwords when using crypto. (default: `false`)
+* `partitioning-allow-noswap`: Allow partitioning without swap. (default: `false`)
 * `enable-puppetlabs-repo`: Add the Puppet Labs APT repo to the APT sources during install (default: `false`)
 * `enable-puppetlabs-pc1-repo`: Add the Puppet Labs PC1 APT repo to the APT sources during install (default: `false`)
 * `enable-saltstack-repo`: Add the SaltStack APT repo to the APT sources during install (default: `false`)
