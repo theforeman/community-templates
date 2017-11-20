@@ -87,13 +87,15 @@ class FakeNamespace
       ),
       :as_string => name,
       :subnet => FakeStruct.new(
-        :dhcp_boot_mode? => true
+        :dhcp_boot_mode? => true,
+        :mtu => 1500
       ),
       :mac => '00:00:00:00:00:01',
       :primary_interface => FakeStruct.new(
         :identifier => 'eth0',
         :subnet => FakeStruct.new(
-          :dhcp_boot_mode? => true
+          :dhcp_boot_mode? => true,
+        :mtu => 9000
         ),
       ),
      :managed_interfaces => [
@@ -103,7 +105,8 @@ class FakeNamespace
          :primary => true,
          :ip => '1.2.3.4',
          :subnet => FakeStruct.new(
-           :dhcp_boot_mode? => true
+           :dhcp_boot_mode? => true,
+           :mtu => 1496
          ),
        ),
      ]
