@@ -1,6 +1,7 @@
 <%#
 kind: snippet
 name: fix_hosts
+model: ProvisioningTemplate
 %>
 echo "<%= @host.shortname %>" > /etc/hostname
 hostname <%= @host.shortname %>

@@ -11,10 +11,12 @@ class TestHeaders < Minitest::Test
       refute_nil extracted
       yaml = YAML.load(extracted[1])
       refute_nil yaml
-      refute_nil yaml['kind']
-      refute_empty yaml['kind']
-      refute_nil yaml['name']
-      refute_empty yaml['name']
+      refute_nil yaml['kind'], "#{erb} metadata does not contain kind attribute"
+      refute_empty yaml['kind'], "#{erb} metadata kind attribute is empty"
+      refute_nil yaml['name'], "#{erb} metadata does not contain name attribute"
+      refute_empty yaml['name'], "#{erb} metadata name attribute is empty"
+      refute_nil yaml['model'], "#{erb} metadata does not contain model attribute"
+      refute_empty yaml['model'], "#{erb} metadata model attribute is empty"
     end
   end
 end

@@ -1,6 +1,7 @@
 <%#
 kind: snippet
 name: puppetlabs_repo
+model: ProvisioningTemplate
 -%>
 <%
 http_proxy   = host_param('http-proxy') ? " --httpproxy #{host_param('http-proxy')}" : nil
