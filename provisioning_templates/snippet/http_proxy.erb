@@ -2,6 +2,7 @@
 kind: snippet
 name: http_proxy
 model: ProvisioningTemplate
+snippet: true
 %>
 <% if (proxy = host_param("http_proxy")) -%>
 http_proxy=<%= proxy %>
