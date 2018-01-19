@@ -223,7 +223,7 @@ cp /etc/resolv.conf /mnt/etc
 <%= snippet 'redhat_register' %>
 <% end -%>
 
-/usr/bin/curl -o /dev/null -k '<%= foreman_url('built') %>'
+<%= snippet 'built' %>
 
 rm /etc/resolv.conf
 ]]>
