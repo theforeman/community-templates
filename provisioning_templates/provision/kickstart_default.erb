@@ -41,7 +41,11 @@ This template accepts the following parameters:
   section_end = (rhel_compatible && os_major <= 5) ? '' : '%end'
 %>
 install
+<% if host_param('kickstart_liveimg') %>
+liveimg --url=<%= host_param('kickstart_liveimg') %> <%= proxy_string %>
+<% else %>
 <%= @mediapath %><%= proxy_string %>
+<% end %>
 lang <%= host_param('lang') || 'en_US.UTF-8' %>
 selinux --<%= host_param('selinux-mode') || host_param('selinux') || 'enforcing' %>
 keyboard <%= host_param('keyboard') || 'us' %>
