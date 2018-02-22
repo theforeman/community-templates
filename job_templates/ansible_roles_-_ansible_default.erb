@@ -1,0 +1,20 @@
+<%#
+name: Ansible Roles - Ansible Default
+job_category: Ansible Playbook
+description_format: Run Ansible roles
+snippet: false
+provider_type: Ansible
+kind: job_template
+model: JobTemplate
+%>
+
+---
+- hosts: all
+  tasks:
+    - name: Display all parameters known for the Foreman host
+      debug:
+        var: foreman_params
+  roles:
+<%- if @host.all_ansible_roles.present? -%>
+<%=   @host.all_ansible_roles.map { |role| "    - #{role.name.strip}" }.join("\n") %>
+<%- end -%>
