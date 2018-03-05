@@ -16,7 +16,7 @@ template_inputs:
 echo <%= input('action') %> host && sleep 3
 <%= case input('action')
       when 'restart'
-        'reboot'
+        'shutdown -r +1'
       else
         'shutdown -h now'
       end %>
