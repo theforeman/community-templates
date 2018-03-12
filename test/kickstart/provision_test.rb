@@ -53,14 +53,14 @@ class TestKickstartProvision < Minitest::Test
   end
 
   def test_rhel_5
-    validate_distro(kickstart_path + '/kickstart_rhel_default.erb', 'Redhat', 'RHEL', '5', '0', 'RHEL5')
+    validate_distro(kickstart_path + '/kickstart_default.erb', 'Redhat', 'RHEL', '5', '0', 'RHEL5')
   end
 
   def test_rhel_6
-    validate_distro(kickstart_path + '/kickstart_rhel_default.erb', 'Redhat', 'RHEL', '6', '0', 'RHEL6')
+    validate_distro(kickstart_path + '/kickstart_default.erb', 'Redhat', 'RHEL', '6', '0', 'RHEL6')
   end
 
   def test_rhel_7
-    validate_distro(kickstart_path + '/kickstart_rhel_default.erb', 'Redhat', 'RHEL', '7', '0', 'RHEL7')
+    validate_distro(kickstart_path + '/kickstart_default.erb', 'Redhat', 'RHEL', '7', '0', 'RHEL7')
   end
 end
