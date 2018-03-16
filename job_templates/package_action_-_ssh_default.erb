@@ -65,7 +65,17 @@ function exit_with_message {
   apt-get -y <%= input("action") %> <%= input("package") %>
 <% end -%>
 <% elsif @host.operatingsystem.family == 'Suse' -%>
-  zypper -n <%= input("action") %> <%= input("package") %>
+  <%
+    if input("action") == "group install"
+      suse_action = "install -t pattern"
+    elsif input("action") == "group remove"
+      suse_action = "remove -t pattern"
+    else
+      suse_action = input("action")
+    end
+  -%>
+
+  zypper -n <%= suse_action %> <%= input("package") %>
 <% end -%>
 RETVAL=$?
 [ $RETVAL -eq 0 ] || exit_with_message "Package action failed" $RETVAL
