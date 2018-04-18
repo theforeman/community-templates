@@ -9,6 +9,8 @@ description: this will configure your host networking, it configures your primar
 %>
 <% subnet = @host.subnet -%>
 <% dhcp = subnet.dhcp_boot_mode? -%>
+<% subnet6 = @host.subnet6 -%>
+<% dhcp6 = subnet6.dhcp_boot_mode? -%>
 
 real=`ip -o link | awk '/<%= @host.mac -%>/ {print $2;}' | sed s/://`
 cat << EOF > /etc/network/interfaces
@@ -27,25 +29,45 @@ iface $real inet <%= dhcp ? 'dhcp' : 'static' %>
     dns-nameservers <%= @host.subnet.dns_primary %> <%= @host.subnet.dns_secondary %>
     dns-search <%= @host.domain %>
 <% end %>
+<% if @host.ip6 && @host.subnet6 && !dhcp6 %>
+iface $real inet6 static
+    address <%= @host.ip6 %>/<%= @host.subnet6.cidr  %>
+<% if @host.subnet6.gateway -%>
+    gateway <%= @host.subnet6.gateway  %>
+<% end %>
+<% end %>
 EOF
 
 <% @host.managed_interfaces.each do |interface| %>
-<% next if !interface.managed? || interface.subnet.nil? || interface.primary -%>
-<% subnet = interface.subnet -%>
-<% virtual = interface.virtual? -%>
-<% dhcp = subnet.nil? ? false : subnet.dhcp_boot_mode? -%>
+<% next if !interface.managed? || (interface.subnet.nil? && interface.subnet6.nil?) || interface.primary -%>
 real=`ip -o link | awk '/<%= interface.mac -%>/ {print $2;}' | sed s/:$//`
+<% virtual = interface.virtual? -%>
 <% if virtual -%>
 real=`echo <%= interface.identifier -%> | sed s/<%= interface.attached_to -%>/$real/`
 <% end -%>
 
 cat << EOF >> /etc/network/interfaces
 #<%= interface.identifier %>
+<% if interface.subnet %>
+<% subnet = interface.subnet -%>
+<% dhcp = subnet.nil? ? false : subnet.dhcp_boot_mode? -%>
 auto $real
 iface $real inet <%= dhcp ? 'dhcp' : 'static' %>
 <% unless dhcp -%>
     address <%= interface.ip %>
     netmask <%= subnet.mask %>
+<% end %>
+<% end %>
+<% if interface.ip6 && interface.subnet6 %>
+<% subnet6 = interface.subnet6 -%>
+<% dhcp6 = subnet6.dhcp_boot_mode? -%>
+<% unless dhcp6 -%>
+iface $real inet6 static
+    address <%= interface.ip6 %>/<%= subnet6.cidr  %>
+<% if subnet6.gateway -%>
+    gateway <%= subnet6.gateway  %>
+<% end %>
+<% end %>
 <% end %>
 EOF
 <% end -%>
