@@ -124,7 +124,7 @@ snippet: true
       subscription-manager register --name="<%= @host.name %>" --username='<%= host_param("subscription_manager_username") %>' --password='<%= host_param("subscription_manager_password") %>'
       subscription-manager attach --pool='<%= host_param('subscription_manager_pool') %>'
     <% else %>
-      subscription-manager register --name="<%= @host.name %>" --username='<%= host_param("subscription_manager_username") %>' --password='<%= @host.params("subscription_manager_password") %>' --auto-attach
+      subscription-manager register --name="<%= @host.name %>" --username='<%= host_param("subscription_manager_username") %>' --password='<%= host_param("subscription_manager_password") %>' --auto-attach
     <% end %>
 
   <% elsif activation_key %>
