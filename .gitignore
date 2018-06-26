@@ -1,4 +1,5 @@
 .idea
 .DS_Store
+Gemfile.lock
 sync_foreman.sh
 copy_foreman.sh

@@ -5,8 +5,10 @@ addons:
   apt:
     packages:
       - debconf
-install:
-  - pip install --user six requests
-  - git clone --depth 1 -b r2.20-1 git://github.com/rhinstaller/pykickstart.git
-  - (cd pykickstart && pip install --user .)
-  - bundle install --jobs=3 --retry=3
+      - keyboard-configuration
+      - python3-pip
+before_install:
+  # ordered-set needs a newer setuptools
+  - pip3 install --user --upgrade setuptools
+  - pip3 install --user ordered-set pykickstart
+  - sed s,/var/cache/debconf/passwords.dat,$HOME/debconf-passwords.dat,g /etc/debconf.conf > $HOME/.debconfrc

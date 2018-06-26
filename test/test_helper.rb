@@ -1,3 +1,4 @@
+require 'open3'
 require 'erb'
 require 'tempfile'
 require 'nokogiri'
@@ -55,9 +56,11 @@ class FakeNamespace
   def initialize(family, name, major, minor, release = nil)
     @mediapath = 'url --url http://localhost/repo/xyz'
     @root_pass = '$1$redhat$9yxjZID8FYVlQzHGhasqW/'
-    @grub_pass = 'blah'
+    @grub_pass = '--password=blah'
     @dynamic = false,
     @static = false,
+    @preseed_server = 'example.com:80'
+    @preseed_path = '/bla'
     @host = FakeStruct.new(
       :operatingsystem => FakeStruct.new(
         :name => name,
@@ -151,20 +154,20 @@ module TemplatesHelper
 
   def ksvalidator(version, kickstart)
     ksvalidator_cmd = ENV['KSVALIDATOR'] || 'ksvalidator'
-    output = `#{ksvalidator_cmd} -v #{version} #{kickstart}`
-    [$?.to_i, output]
+    stdout, stderr, status = Open3.capture3("#{ksvalidator_cmd} -v #{version} #{kickstart}")
+    [status, stdout, stderr]
   end
 
   def debconfsetsel(preseed)
     debconfset_cmd = ENV['DEBCONFSETSEL'] || 'debconf-set-selections'
-    output = `#{debconfset_cmd} --checkonly #{preseed}`
-    [$?.to_i, output]
+    stdout, stderr, status = Open3.capture3("#{debconfset_cmd} --checkonly #{preseed}")
+    [status, stdout, stderr]
   end
 
   def autoyastvalidator(autoyast)
     xml = File.open(autoyast) { |f| Nokogiri::XML(f) }
     xml_errors = xml.errors
-    [xml_errors.length, xml_errors]
+    [xml_errors.length, '', xml_errors]
   end
 
   def validate_erb(template, namespace, ksversion)
@@ -187,5 +190,19 @@ end
 class String
   def blank?
     self !~ /[^[:space:]]/
+  end
+end
+
+class TemplateRenderer
+  include TemplatesHelper
+
+  def initialize(osfamily, template)
+    @osfamily = osfamily
+    @template = template
+  end
+
+  def render(distro, major, minor, distro_prefix)
+    ns = FakeNamespace.new(@osfamily, distro, major, minor)
+    validate_erb(@template, ns, "#{distro_prefix}#{major}")
   end
 end

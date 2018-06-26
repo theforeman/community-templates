@@ -1,4 +1,3 @@
-gem 'minitest'
 require 'minitest/autorun'
 require 'test_helper'
 
@@ -7,8 +6,9 @@ class TestAutoyastProvision < Minitest::Test
 
   def validate_distro(template, family, name, major, minor)
     ns = FakeNamespace.new(family, name, major, minor)
-    code, output = validate_erb(template, ns, '')
-    assert_empty output
+    code, stdout, stderr = validate_erb(template, ns, '')
+    assert_empty stdout
+    assert_empty stderr
     assert_equal code, 0
   end
 
