@@ -57,6 +57,9 @@ oses:
     options.push("modprobe.blacklist=" + host_param('blacklist').gsub(' ', ''))
   end
 
+  # send PXELinux "IPAPPEND 2" option along
+  options.push("BOOTIF=01-$net_default_mac")
+
   ksoptions = options.join(' ')
 
   # efi grub commands are RHEL7+ only, this prevents "Kernel is too old"
