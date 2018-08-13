@@ -43,8 +43,20 @@ This template accepts the following parameters:
 <% if @host.operatingsystem.name != 'Fedora' || os_major < 29 -%>
 install
 <% end -%>
-<% if host_param('kickstart_liveimg') %>
-liveimg --url=<%= host_param('kickstart_liveimg') %> <%= proxy_string %>
+<%
+if host_param('kickstart_liveimg')
+  img_name = host_param('kickstart_liveimg')
+  liveimg_url = if host_param('kt_activation_keys')
+    repository_url(img_name, 'isos')
+  else
+    if img_name.match(%r|^([\w\-\+]+)://|)
+      img_name
+    else
+      "#{@host.operatingsystem.medium_uri(@host)}/#{img_name}"
+    end
+  end
+%>
+liveimg --url=<%= liveimg_url %> <%= proxy_string %>
 <% else %>
 <%= @mediapath %><%= proxy_string %>
 <% end %>

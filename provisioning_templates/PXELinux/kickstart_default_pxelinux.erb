@@ -52,9 +52,13 @@ oses:
   if @host.operatingsystem.name.match(/Atomic/i)
     options.push("inst.repo=#{@host.operatingsystem.medium_uri(@host)}")
   end
-  
+
   if host_param('blacklist')
     options.push("modprobe.blacklist=" + host_param('blacklist').gsub(' ', ''))
+  end
+
+  if host_param('kickstart_liveimg')
+    options.push('inst.stage2=' + @host.operatingsystem.medium_uri(@host).to_s)
   end
 
   ksoptions = options.join(' ')
