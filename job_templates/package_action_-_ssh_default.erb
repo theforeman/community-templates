@@ -38,7 +38,7 @@ template_inputs:
 # Usage:
 #   exit_with_message "Could not do a thing" 2
 #
-function exit_with_message {
+exit_with_message () {
   echo "${1}, exiting..."
   exit $2
 }
