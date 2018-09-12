@@ -1,0 +1,31 @@
+<%#
+kind: iPXE
+model: ProvisioningTemplate
+name: iPXE intermediate script
+snippet: false
+-%>
+#!ipxe
+
+# Skips booting from network and continues booting from next device
+exit
+
+#!ipxe
+# Intermediate iPXE script to report MAC address to Foreman
+isset ${net0/mac} || goto no_nic
+dhcp net0 || goto net1
+chain <%= foreman_url('iPXE') %>?mac=${net0/mac} || goto net1
+exit 0
+
+:net1
+isset ${net1/mac} || goto no_nic
+dhcp net1 || goto net2
+chain <%= foreman_url('iPXE') %>?mac=${net1/mac} || goto net2
+exit 0
+
+:net1
+# Create as many copies as necessary (the example will work up to 2 NICs)
+
+:no_nic
+echo Failed to chainload from any network interface
+sleep 30
+exit 1
