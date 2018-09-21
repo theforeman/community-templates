@@ -4,7 +4,7 @@ name: Module Action - SSH Default
 model: JobTemplate
 job_category: Modules
 description_format: "Module %{action} %{module_spec}"
-provider_type: Ansible
+provider_type: SSH
 template_inputs:
 - name: pre_script
   description: A script to run prior to the module action
