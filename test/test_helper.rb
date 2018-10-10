@@ -144,6 +144,10 @@ class FakeNamespace
   def foreman_url(*args)
     'http://localhost'
   end
+
+  def indent(_, string)
+    string
+  end
 end
 
 module TemplatesHelper
