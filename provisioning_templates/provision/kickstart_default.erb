@@ -42,9 +42,9 @@ This template accepts the following parameters:
   salt_enabled = host_param('salt_master') ? true : false
   chef_enabled = @host.respond_to?(:chef_proxy) && @host.chef_proxy
   section_end = (rhel_compatible && os_major <= 5) ? '' : '%end'
-  use_ntp = host_param_true?('use-ntp') || (is_fedora && os_major < 16) || (rhel_compatible && os_major < 8)
+  use_ntp = host_param_true?('use-ntp') || (is_fedora && os_major < 16) || (rhel_compatible && os_major <= 7)
 %>
-<% if (is_fedora && os_major < 29) || (rhel_compatible && os_major < 8) -%>
+<% if (is_fedora && os_major < 29) || (rhel_compatible && os_major <= 7) -%>
 install
 <% end -%>
 <%
@@ -84,7 +84,7 @@ firewall --disable
 <% else -%>
 firewall --<%= os_major >= 6 ? 'service=' : '' %>ssh
 <% end -%>
-<% if (is_fedora && os_major >= 28) || (rhel_compatible && os_major >= 8) -%>
+<% if (is_fedora && os_major >= 28) || (rhel_compatible && os_major > 7) -%>
 authselect --useshadow --passalgo=<%= @host.operatingsystem.password_hash.downcase || 'sha256' %> --kickstart
 <% else -%>
 authconfig --useshadow --passalgo=<%= @host.operatingsystem.password_hash.downcase || 'sha256' %> --kickstart
