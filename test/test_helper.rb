@@ -55,6 +55,7 @@ class FakeNamespace
   attr_reader :root_pass, :grub_pass, :host
   def initialize(family, name, major, minor, release = nil)
     @mediapath = 'url --url http://localhost/repo/xyz'
+    @additional_media = []
     @root_pass = '$1$redhat$9yxjZID8FYVlQzHGhasqW/'
     @grub_pass = '--password=blah'
     @dynamic = false,
