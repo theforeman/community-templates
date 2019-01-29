@@ -52,6 +52,29 @@ exit_with_message () {
   exit $2
 }
 
+<% if package_manager == 'zypper' -%>
+handle_zypp_res_codes () {
+  RETVAL=$1
+
+  # See https://github.com/openSUSE/zypper/blob/master/src/main.h
+  declare -A ZYPP_RES_CODES
+  ZYPP_RES_CODES[100]='Updates are needed'
+  ZYPP_RES_CODES[101]='Security updates are needed'
+  ZYPP_RES_CODES[102]='Reboot needed after install/upgrade'
+  ZYPP_RES_CODES[103]='Restart of package manager itself needed'
+  ZYPP_RES_CODES[104]='given capability not found'
+  ZYPP_RES_CODES[105]='SIGINT or SIGTERM received'
+  ZYPP_RES_CODES[106]='Some repos have been skipped due to refresh errors'
+  ZYPP_RES_CODES[107]='Some rpm %post configuration script failed'
+
+  if [ "${ZYPP_RES_CODES[$RETVAL]}" != "" ]; then
+    echo ${ZYPP_RES_CODES[$RETVAL]}
+    RETVAL=0
+  fi
+  return $RETVAL
+}
+<% end -%>
+
 <% unless input("pre_script").blank? -%>
   # Pre Script
   <%= input("pre_script") %>
@@ -85,6 +108,7 @@ exit_with_message () {
     end
   -%>
   zypper -n <%= action %> <%= input("package") %>
+  handle_zypp_res_codes $?
 <% end -%>
 RETVAL=$?
 [ $RETVAL -eq 0 ] || exit_with_message "Package action failed" $RETVAL
