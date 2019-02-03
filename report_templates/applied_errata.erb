@@ -1,0 +1,28 @@
+<%#
+name: Applied Errata
+snippet: false
+template_inputs:
+- name: Filter Errata Type
+  required: false
+  input_type: user
+  description: Filter only errata of a given type. If you select all, errata are not
+    filtered by type.
+  options: "all\r\nsecurity\r\nbugfix\r\nrecommended\r\nenhancement\r\noptional"
+  advanced: false
+- name: Include Last Reboot
+  required: false
+  input_type: user
+  description: Last reboot information is based on configuration management facts,
+    such as uptime reported by Puppet or Ansible. The computation might be performance
+    heavy, if this value is not interesting, it can be omitted by choosing no.
+  options: "yes\r\nno"
+  advanced: false
+model: ReportTemplate
+require:
+- plugin: katello
+  version: 3.12.0
+-%>
+<%- load_errata_applications(filter_errata_type: input('Filter Errata Type'), include_last_reboot: input('Include Last Reboot')).each do |info| -%>
+<%-   report_row(info) -%>
+<%- end -%>
+<%= report_render -%>
