@@ -66,8 +66,8 @@ oses:
 
   ksoptions = options.join(' ')
 
-  # efi grub commands are RHEL7+ only, this prevents "Kernel is too old"
-  if @host.operatingsystem.family == 'Redhat' && major < 7
+  # Grub EFI commands are RHEL7+ only (prevents "Kernel is too old") or for non-EFI arch
+  if (@host.operatingsystem.family == 'Redhat' && major < 7) || !@host.pxe_loader.include?('EFI')
     linuxcmd = "linux"
     initrdcmd = "initrd"
   else
