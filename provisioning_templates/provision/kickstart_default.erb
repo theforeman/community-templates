@@ -253,6 +253,8 @@ sed -e 's/DEFAULTKERNEL=kernel-uek/DEFAULTKERNEL=kernel/g' -i /etc/sysconfig/ker
 
 <%= snippet('ansible_provisioning_callback') %>
 
+<%= snippet 'efibootmgr_netboot' %>
+
 touch /tmp/foreman_built
 <%= section_end -%>
 
