@@ -141,6 +141,14 @@ class FakeNamespace
     ''
   end
 
+  def snippet_if_exists(*args)
+    ''
+  end
+
+  def template_name
+    'template name'
+  end
+
   def ks_console(*args)
     'console=ttyS99'
   end

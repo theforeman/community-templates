@@ -83,3 +83,5 @@ menuentry '<%= template_name %>' {
   <%= linuxcmd %> <%= @kernel %> ks=<%= foreman_url('provision') %> <%= pxe_kernel_options %> <%= ksoptions %>
   <%= initrdcmd %> <%= @initrd %>
 }
+
+<%= snippet_if_exists(template_name + " custom menu") %>
