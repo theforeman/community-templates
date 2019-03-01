@@ -27,6 +27,7 @@ This template accepts the following parameters:
 - package_upgrade: boolean (default=true)
 - disable-uek: boolean (default=false)
 - use-ntp: boolean (default depends on OS release)
+- fips_enabled: boolean (default=false)
 %>
 <%
   rhel_compatible = @host.operatingsystem.family == 'Redhat' && @host.operatingsystem.name != 'Fedora'
@@ -152,6 +153,10 @@ wget
 <% if os_major >= 6 -%>
 redhat-lsb-core
 <% end -%>
+<% if host_param_true?('fips_enabled') -%>
+<%=   snippet 'fips_packages' %>
+<% end -%>
+
 
 <% if salt_enabled %>
 salt-minion
