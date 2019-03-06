@@ -26,7 +26,7 @@ iface $real inet <%= host_dhcp ? 'dhcp' : 'static' %>
     address <%= @host.ip %>
     gateway <%= host_subnet.gateway %>
     netmask <%= host_subnet.mask %>
-    dns-nameservers <%= host_subnet.dns_primary %> <%= host_subnet.dns_secondary %>
+    dns-nameservers <%= host_subnet.dns_servers.join(' ') %>
     dns-search <%= @host.domain %>
 <% end -%>
 <% if @host.ip6 && host_subnet6 && !host_dhcp6 -%>

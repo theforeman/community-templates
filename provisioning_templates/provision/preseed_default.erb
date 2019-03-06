@@ -44,7 +44,7 @@ d-i netcfg/dhcp_options select Configure network manually
 d-i netcfg/disable_dhcp boolean true
 d-i netcfg/get_ipaddress string <%= @host.ip %>
 d-i netcfg/get_netmask string <%= subnet.mask %>
-d-i netcfg/get_nameservers string <%= [subnet.dns_primary,subnet.dns_secondary].reject{|n| n.blank?}.join(' ') %>
+d-i netcfg/get_nameservers string <%= subnet.dns_servers.join(' ') %>
 d-i netcfg/get_gateway string <%= subnet.gateway %>
 d-i netcfg/confirm_static boolean true
 <% end -%>
