@@ -22,7 +22,7 @@ class PartitioningHelper
       clearpart --all --initlabel
       part / --fstype=ext4 --size=1024 --grow
       part swap  --recommended
-      DL
+    DL
     part
   end
 
@@ -58,8 +58,8 @@ class FakeNamespace
     @additional_media = []
     @root_pass = '$1$redhat$9yxjZID8FYVlQzHGhasqW/'
     @grub_pass = '--password=blah'
-    @dynamic = false,
-    @static = false,
+    @dynamic = false
+    @static = false
     @preseed_server = 'example.com:80'
     @preseed_path = '/bla'
     @host = FakeStruct.new(
@@ -99,22 +99,26 @@ class FakeNamespace
         :identifier => 'eth0',
         :subnet => FakeStruct.new(
           :dhcp_boot_mode? => true,
-        :mtu => 9000
+          :mtu => 9000
         ),
       ),
-     :managed_interfaces => [
-       FakeStruct.new(
-         :identifier => 'eth0',
-         :managed? => true,
-         :primary => true,
-         :ip => '1.2.3.4',
-         :subnet => FakeStruct.new(
-           :dhcp_boot_mode? => true,
-           :mtu => 1496
-         ),
-       ),
-     ]
+      :managed_interfaces => [
+        FakeStruct.new(
+          :identifier => 'eth0',
+          :managed? => true,
+          :primary => true,
+          :ip => '1.2.3.4',
+          :subnet => FakeStruct.new(
+            :dhcp_boot_mode? => true,
+            :mtu => 1496
+          ),
+        ),
+      ]
     )
+  end
+
+  def plugin_present?(name)
+    false
   end
 
   def host_enc
