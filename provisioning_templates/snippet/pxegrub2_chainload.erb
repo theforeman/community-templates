@@ -45,9 +45,9 @@ menuentry 'Chainload Grub2 EFI from ESP' --id local_chain_hd0 {
   echo and investigate available files updating 'pxegrub2_chainload' template and
   echo the list of known filepaths for probing. Contents of \EFI directory:
   ls ($chroot)/EFI
-  echo The system will now attempt to perform discovery.
-  sleep -i 10
-<%= indent(2) { snippet "pxegrub2_discovery" } %>
+  echo The system will halt in 2 minutes or press ESC to halt immediately.
+  sleep -i 120
+  halt --no-apm
 }
 
 menuentry 'Chainload into BIOS bootloader on first disk' --id local_chain_legacy_hd0 {
@@ -62,6 +62,4 @@ menuentry 'Chainload into BIOS bootloader on second disk' --id local_chain_legac
   boot
 }
 
-menuentry 'Foreman Discovery Image' --id discovery {
 <%= indent(2) { snippet "pxegrub2_discovery" } %>
-}
