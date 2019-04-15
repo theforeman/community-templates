@@ -17,6 +17,7 @@ source "$configfile"
 
 # And if that fails render chain and discovery menu
 <%= snippet "pxegrub2_chainload" %>
+<%= snippet "pxegrub2_discovery" %>
 
 <% unless @profiles.nil? -%>
 <% for profile in @profiles
