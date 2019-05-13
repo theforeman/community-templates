@@ -98,7 +98,7 @@ handle_zypp_res_codes () {
     end
   -%>
   apt-get -y update
-  apt-get -y <%= action %> <%= input("package") %>
+  apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y <%= action %> <%= input("package") %>
 <% elsif package_manager == 'zypper' -%>
   <%-
     if action == "group install"
@@ -107,6 +107,7 @@ handle_zypp_res_codes () {
       action = "remove -t pattern"
     end
   -%>
+  zypper refresh
   zypper -n <%= action %> <%= input("package") %>
   handle_zypp_res_codes $?
 <% end -%>
