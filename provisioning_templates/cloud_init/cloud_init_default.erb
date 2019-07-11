@@ -27,6 +27,7 @@ users: {}
 <% if puppet_enabled %>
 runcmd:
 - |
+<%= snippet 'redhat_register' %>
 <% if host_param_true?('enable-puppetlabs-pc1-repo') || host_param_true?('enable-puppetlabs-repo') || host_param_true?('enable-puppetlabs-puppet5-repo') -%>
 <%= snippet 'puppetlabs_repo' %>
 <% end -%>
