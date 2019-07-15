@@ -109,8 +109,11 @@ The templates use some Host Parameters to control the flow of the template. Thes
 * `partitioning-crypto-password`: Password for luks crypto method. Recommend changing this post install! (default: `temporarypassword`)
 * `partitioning-crypto-password-weak`: Allow weak passwords when using crypto. (default: `false`)
 * `partitioning-allow-noswap`: Allow partitioning without swap. (default: `false`)
-* `enable-puppetlabs-repo`: Add the Puppet Labs APT repo to the APT sources during install (default: `false`)
-* `enable-puppetlabs-pc1-repo`: Add the Puppet Labs PC1 APT repo to the APT sources during install (default: `false`)
+* `enable-puppet-puppet5`: Assume Puppet 5 AIO packages instead of system packages
+* `enable-puppet-puppet6`: Assume Puppet 6 AIO packages instead of system packages
+* `enable-puppetlabs-repo`: Add the Puppet Labs repo during install (default: `false`)
+* `enable-puppetlabs-puppet5-repo`: Add the Puppet Labs Puppet 5 repo during install (default: `false`)
+* `enable-puppetlabs-puppet6-repo`: Add the Puppet Labs Puppet 6 repo during install (default: `false`)
 * `enable-saltstack-repo`: Add the SaltStack APT repo to the APT sources during install (default: `false`)
 * `salt_master`: SaltStack Master (default: empty)
 * `salt_grains`: Salt client specific information, like facter (default: empty)
