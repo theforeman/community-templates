@@ -30,10 +30,12 @@ d-i console-keymaps-at/keymap seen true
 <% end -%>
 
 <% subnet = @host.subnet -%>
-<% if subnet.respond_to?(:dhcp_boot_mode?) -%>
-  <% dhcp = subnet.dhcp_boot_mode? && !@static -%>
+<% if @static -%>
+  <%- dhcp = false -%>
+<% elsif subnet.nil? -%>
+  <%- dhcp = true -%>
 <% else -%>
-  <% dhcp = !@static -%>
+  <%- dhcp = subnet.dhcp_boot_mode? -%>
 <% end -%>
 <% unless dhcp -%>
 # Static network configuration.
