@@ -1,0 +1,36 @@
+<%#
+kind: job_template
+name: Check Update - SSH Default
+model: JobTemplate
+job_category: Packages
+description_format: "Check for package updates"
+provider_type: SSH
+%>
+
+<%
+  supported_families = ['Redhat', 'Debian', 'Suse']
+  render_error(N_('Unsupported or no operating system found for this host.')) unless @host.operatingsystem && supported_families.include?(@host.operatingsystem.family)
+
+  command = case @host.operatingsystem.family
+            when 'Redhat'
+              'yum check-update'
+            when 'Debian'
+              'apt list --upgradable'
+            when 'Suse'
+              'zypper list-updates'
+            end
+-%>
+
+<%= command %>
+<% if command.start_with? 'yum' %>
+rc=$?
+# yum check-update returns 100 when there are updates available
+if [ $rc -eq 100 ]; then
+    # In this case, we override the exit code to 0 so Remote Execution
+    # can consider this run as successful
+    (exit 0)
+else
+    # For any other exit code, we don't modify it
+    (exit $rc)
+fi
+<% end %>
