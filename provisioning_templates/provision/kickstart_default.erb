@@ -44,7 +44,16 @@ This template accepts the following parameters:
   chef_enabled = @host.respond_to?(:chef_proxy) && @host.chef_proxy
   section_end = (rhel_compatible && os_major <= 5) ? '' : '%end'
   use_ntp = host_param_true?('use-ntp') || (is_fedora && os_major < 16) || (rhel_compatible && os_major <= 7)
+  iface = @host.provision_interface
+  network_options = []
 %>
+
+<%- if iface.tag.present? && iface.attached_to.present?
+  network_options.push = "--device=#{iface.attached_to} --vlanid=#{iface.tag}"
+else
+  network_options.push = os_major >= 6 ? " --device=#{@host.mac}" : ''
+end -%>
+
 <% if (is_fedora && os_major < 29) || (rhel_compatible && os_major <= 7) -%>
 install
 <% end -%>
@@ -80,7 +89,7 @@ skipx
 <% dhcp = !@static -%>
 <% end -%>
 
-network --bootproto <%= dhcp ? 'dhcp' : "static --ip=#{@host.ip} --netmask=#{subnet.mask} --gateway=#{subnet.gateway} --nameserver=#{subnet.dns_servers.join(',')} --mtu=#{subnet.mtu.to_s}" %> --hostname <%= @host %><%= os_major >= 6 ? " --device=#{@host.mac}" : '' -%>
+network --bootproto <%= dhcp ? 'dhcp' : "static --ip=#{@host.ip} --netmask=#{subnet.mask} --gateway=#{subnet.gateway} --nameserver=#{subnet.dns_servers.join(',')} --mtu=#{subnet.mtu.to_s}" %> --hostname <%= @host %> <%= network_options.join(' ') %>
 
 rootpw --iscrypted <%= root_pass %>
 <% if host_param_true?('disable-firewall') -%>

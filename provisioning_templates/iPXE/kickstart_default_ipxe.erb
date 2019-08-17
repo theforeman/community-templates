@@ -8,6 +8,13 @@ oses:
 - Fedora
 - RedHat
 %>
+<%
+options = []
+hostname = @host.name
+iface = @host.provision_interface
+mac = @host.provision_interface.mac
+-%>
+
 <% subnet = @host.subnet -%>
 <% if subnet.respond_to?(:dhcp_boot_mode?) && subnet.dhcp_boot_mode? -%>
   <% static = '' -%>
@@ -23,11 +30,21 @@ oses:
 
 <% stage2 = host_param('kickstart_liveimg') ? 'inst.stage2=' + @host.operatingsystem.medium_uri(@host).to_s : '' %>
 
-<%- if (@host.operatingsystem.name.match(/Fedora/i) && @host.operatingsystem.major.to_i < 17) || @host.operatingsystem.major.to_i < 7 %>
-<%- net_options = 'ip=${netX/ip} netmask=${netX/netmask} gateway=${netX/gateway} dns=${dns}' -%>
-<%- else -%>
-<%- net_options = 'ip=${netX/ip}::${netX/gateway}:${netX/netmask}:::none nameserver=${dns}' -%>
-<%- end -%>
+<%
+  if (@host.operatingsystem.name.match(/Fedora/i) && @host.operatingsystem.major.to_i < 17) || @host.operatingsystem.major.to_i < 7
+    options.push('ip=${netX/ip} netmask=${netX/netmask} gateway=${netX/gateway} dns=${dns}')
+    if iface.tag.present? && iface.attached_to.present?
+      options.push("vlanid=#{iface.tag} ksdevice=#{iface.identifier}")
+    end
+  else
+    options.push("ip=${netX/ip}::${netX/gateway}:${netX/netmask}:#{hostname}:#{interface}:none nameserver=${dns}")
+    if iface.tag.present? && iface.attached_to.present?
+      options.push("vlan=#{iface.identifier}:#{iface.attached_to} bootdev=#{iface.identifier} ifname=#{iface.attached_to}:#{mac}")
+    end
+  end
+-%>
+
+<% ksoptions = options.join(' ') -%>
 
 <%- if @host.operatingsystem.name != 'Fedora' && @host.operatingsystem.major.to_i >= 7 && host_param_true?('fips_enabled') %>
 <%-   fips = 'fips=1' -%>
@@ -35,7 +52,7 @@ oses:
 <%-   fips = '' -%>
 <%- end -%>
 
-kernel <%= "#{@host.url_for_boot(:kernel)}" %> initrd=initrd.img ks=<%= foreman_url('provision')%><%= static %> inst.stage2=<%= @host.operatingsystem.medium_uri(@host) %> <%= stage2 %> ksdevice=<%= @host.mac %> network kssendmac ks.sendmac inst.ks.sendmac <%= net_options %> <%= nic_delay %> <%= fips %>
+kernel <%= "#{@host.url_for_boot(:kernel)}" %> initrd=initrd.img ks=<%= foreman_url('provision')%><%= static %> inst.stage2=<%= @host.operatingsystem.medium_uri(@host) %> <%= stage2 %> ksdevice=<%= @host.mac %> network kssendmac ks.sendmac inst.ks.sendmac <%= ksoptions %> <%= fips %>
 initrd <%= "#{@host.url_for_boot(:initrd)}" %>
 imgstat
 sleep 2

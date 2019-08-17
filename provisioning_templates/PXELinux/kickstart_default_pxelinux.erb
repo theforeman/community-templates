@@ -32,12 +32,20 @@ oses:
     ip = @host.provision_interface.ip
     mask = subnet.mask
     gw = subnet.gateway
+    hostname = @host.name
+    iface = @host.provision_interface
     if (@host.operatingsystem.name.match(/Fedora/i) && major < 17) || major < 7
       # old Anacoda found in Fedora 16 or RHEL 6 and older
       dns_servers = subnet.dns_servers.join(',')
       options.push("ip=#{ip}", "netmask=#{mask}", "gateway=#{gw}", "dns=#{dns_servers}")
+      if iface.tag.present? && iface.attached_to.present?
+        options.push("vlanid=#{iface.tag} ksdevice=#{iface.identifier} rd.bootif=0")
+      end
     else
-      options.push("ip=#{ip}::#{gw}:#{mask}:::none")
+      options.push("ip=#{ip}::#{gw}:#{mask}:#{hostname}:#{iface.identifier}:none")
+      if iface.tag.present? && iface.attached_to.present?
+        options.push("vlan=#{iface.identifier}:#{iface.attached_to} bootdev=#{iface.identifier} ifname=#{iface.attached_to}:#{mac} rd.bootif=0")
+      end
       subnet.dns_servers.each { |server|
         options.push("nameserver=#{server}")
       }
