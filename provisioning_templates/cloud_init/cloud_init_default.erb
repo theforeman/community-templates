@@ -24,10 +24,11 @@ hostname: <%= @host.name %>
 fqdn: <%= @host %>
 manage_etc_hosts: true
 users: {}
-<% if puppet_enabled %>
 runcmd:
 - |
-<%= snippet 'redhat_register' %>
+<%= indent(2) { snippet 'redhat_register' } %>
+- |
+<% if puppet_enabled %>
 <% if host_param_true?('enable-puppetlabs-repo') || host_param_true?('enable-puppetlabs-puppet6-repo') || host_param_true?('enable-puppetlabs-puppet5-repo') -%>
 <%= snippet 'puppetlabs_repo' %>
 <% end -%>
