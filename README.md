@@ -40,6 +40,13 @@ To start unit tests do something like:
 
     $ ruby -Itest test/kickstart/provision_test.rb
 
+Another set of tests is in Foreman core git repository, it's possible to run
+useful render test from the core git repo against this directory:
+
+    foreman$ bundle exec rake templates:render DIRECTORY=/path/to/community-templates/provisioning_templates/
+
+It will render selected templates and output can be easily compared via `git diff`.
+
 # Contributing
 
 Please fork and send a pull request. Thanks!
