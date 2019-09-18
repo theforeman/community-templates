@@ -6,6 +6,9 @@ snippet: false
 -%>
 #!ipxe
 
+echo Opening global default menu in 15 seconds...
+sleep 15
+
 set menu-default <%= global_setting("default_pxe_item_global", "local") %>
 set menu-timeout 5000
 set port 8448
