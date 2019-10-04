@@ -22,9 +22,9 @@ describe 'preseed_default.erb' do
       describe "#{distro} #{major}.#{minor} #{release}" do
         it 'will compile' do
           code, stdout, stderr = @renderer.render(distro, major, minor, release)
-          stdout.must_equal ''
-          stderr.must_equal ''
-          code.must_equal 0
+          _(stdout).must_equal ''
+          _(stderr).must_equal ''
+          _(code).must_equal 0
         end
       end
     end
