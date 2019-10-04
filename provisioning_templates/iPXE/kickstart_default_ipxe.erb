@@ -15,6 +15,11 @@ oses:
   <% static_arg = 'static=yes' -%>
   <% static = (@host.token.nil? ? '?' : '&') + static_arg -%>
 <% end -%>
+<% if subnet.nic_delay? -%>
+  <% nic_delay = "linksleep=#{subnet.nic_delay}" -%>
+<% else -%>
+  <% nic_delay = '' -%>
+<% end -%>
 
 <% stage2 = host_param('kickstart_liveimg') ? 'inst.stage2=' + @host.operatingsystem.medium_uri(@host).to_s : '' %>
 
@@ -30,7 +35,7 @@ oses:
 <%-   fips = '' -%>
 <%- end -%>
 
-kernel <%= "#{@host.url_for_boot(:kernel)}" %> initrd=initrd.img ks=<%= foreman_url('provision')%><%= static %> inst.stage2=<%= @host.operatingsystem.medium_uri(@host) %> <%= stage2 %> ksdevice=<%= @host.mac %> network kssendmac ks.sendmac inst.ks.sendmac <%= net_options %> <%= fips %>
+kernel <%= "#{@host.url_for_boot(:kernel)}" %> initrd=initrd.img ks=<%= foreman_url('provision')%><%= static %> inst.stage2=<%= @host.operatingsystem.medium_uri(@host) %> <%= stage2 %> ksdevice=<%= @host.mac %> network kssendmac ks.sendmac inst.ks.sendmac <%= net_options %> <%= nic_delay %> <%= fips %>
 initrd <%= "#{@host.url_for_boot(:initrd)}" %>
 imgstat
 sleep 2
