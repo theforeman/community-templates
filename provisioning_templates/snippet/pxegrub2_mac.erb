@@ -4,9 +4,17 @@ name: pxegrub2_mac
 model: ProvisioningTemplate
 snippet: true
 -%>
-echo "Trying grub.cfg-$net_default_mac"
-source "grub.cfg-$net_default_mac"
-echo "Trying grub2/grub.cfg-$net_default_mac"
-source "grub2/grub.cfg-$net_default_mac"
+echo "Trying /httpboot/grub2/grub.cfg-$net_default_mac"
+configfile "/httpboot/grub2/grub.cfg-$net_default_mac"
+
 echo "Trying /grub2/grub.cfg-$net_default_mac"
-source "/grub2/grub.cfg-$net_default_mac"
+configfile "/grub2/grub.cfg-$net_default_mac"
+
+# Relative paths must go after absolute paths because
+# Grub2 in UEFI HTTP messes URL otherwise and won't load
+# the MAC-based menu.
+echo "Trying grub2/grub.cfg-$net_default_mac"
+configfile "grub2/grub.cfg-$net_default_mac"
+
+echo "Trying grub.cfg-$net_default_mac"
+configfile "grub.cfg-$net_default_mac"
