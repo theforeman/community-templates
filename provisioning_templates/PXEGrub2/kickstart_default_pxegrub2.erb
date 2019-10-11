@@ -83,4 +83,9 @@ menuentry '<%= template_name %>' {
   <%= initrdcmd %> <%= @initrd %>
 }
 
+menuentry '<%= template_name %> HTTP Boot' {
+  <%= linuxcmd %> /httpboot/<%= @kernel %> ks=<%= foreman_url('provision') %> <%= pxe_kernel_options %> <%= ksoptions %>
+  <%= initrdcmd %> /httpboot/<%= @initrd %>
+}
+
 <%= snippet_if_exists(template_name + " custom menu") %>
