@@ -2,6 +2,7 @@ require 'open3'
 require 'erb'
 require 'tempfile'
 require 'nokogiri'
+require 'active_support/all'
 
 class PartitioningHelper
   attr_reader :disk_layout
@@ -62,6 +63,18 @@ class FakeNamespace
     @static = false
     @preseed_server = 'example.com:80'
     @preseed_path = '/bla'
+    @nic1 = FakeStruct.new(
+      :identifier => 'eth0',
+      :managed? => true,
+      :primary => true,
+      :ip => '1.2.3.4',
+      :subnet => FakeStruct.new(
+        :dhcp_boot_mode? => true,
+        :mtu => 1496
+      ),
+      :tag => '',
+      :attached_to => '',
+    )
     @host = FakeStruct.new(
       :operatingsystem => FakeStruct.new(
         :name => name,
@@ -102,18 +115,8 @@ class FakeNamespace
           :mtu => 9000
         ),
       ),
-      :managed_interfaces => [
-        FakeStruct.new(
-          :identifier => 'eth0',
-          :managed? => true,
-          :primary => true,
-          :ip => '1.2.3.4',
-          :subnet => FakeStruct.new(
-            :dhcp_boot_mode? => true,
-            :mtu => 1496
-          ),
-        ),
-      ]
+      :provision_interface => @nic1,
+      :managed_interfaces => [@nic1]
     )
   end
 
