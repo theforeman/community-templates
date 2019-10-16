@@ -59,6 +59,14 @@ template_inputs:
   value_type: plain
   options: "yes\r\nno"
   default: yes
+- name: Subnet v6
+  required: true
+  input_type: user
+  description: Whether should be Subnet v6 included.
+  advanced: false
+  value_type: plain
+  options: "yes\r\nno"
+  default: no
 - name: Smart Proxies
   required: true
   input_type: user
@@ -83,6 +91,14 @@ template_inputs:
   value_type: plain
   options: "yes\r\nno"
   default: no
+- name: Hosts
+  required: false
+  input_type: user
+  description: Limit the report only on hosts found by this search query. Keep
+    empty for report on all available hosts.
+  advanced: false
+  value_type: search
+  resource_type: Host
 model: ReportTemplate
 require:
 - plugin: foreman_ansible
@@ -91,7 +107,7 @@ require:
 ￼  version: '>= 3.9.0'
 -%>
 <%- content_attrs = input('Content Attributes') == 'yes' %>
-<%- load_hosts(includes: [:organization, :location, :hostgroup, :host_collections, { interfaces: :subnet }, :content_facet]).each_record do |host| -%>
+<%- load_hosts(search: input('Hosts'), includes: [:organization, :location, :hostgroup, :host_collections, { interfaces: :subnet }, :content_facet]).each_record do |host| -%>
 <%-   content_facet = host_content_facet(host) if content_attrs -%>
 <%-   content_attribute_data = nil -%>
 <%-   if content_facet -%>
@@ -134,6 +150,7 @@ require:
       inventory_data.update('ipv4': host.ip) if input('IPv4') == 'yes'
       inventory_data.update('ipv6': host.ip6) if input('IPv6') == 'yes'
       inventory_data.update('subnet': host.subnet) if input('Subnet') == 'yes'
+      inventory_data.update('subnet6': host.subnet6) if input('Subnet v6') == 'yes'
       smart_proxies = host.smart_proxies.map { |p| p.name } if host.smart_proxies
       inventory_data.update('smart_proxies': smart_proxies) if input('Smart Proxies') == 'yes'
       inventory_data.update('content_attributes': content_attribute_data) if content_attrs
