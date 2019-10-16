@@ -104,7 +104,7 @@ require:
 - plugin: foreman_ansible
   version: '>= 3.1.0'
 - plugin: katello
-￼  version: '>= 3.9.0'
+  version: '>= 3.9.0'
 -%>
 <%- content_attrs = input('Content Attributes') == 'yes' %>
 <%- load_hosts(search: input('Hosts'), includes: [:organization, :location, :hostgroup, :host_collections, { interfaces: :subnet }, :content_facet]).each_record do |host| -%>
