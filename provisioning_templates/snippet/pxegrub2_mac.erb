@@ -10,9 +10,10 @@ configfile "/httpboot/grub2/grub.cfg-$net_default_mac"
 echo "Trying /grub2/grub.cfg-$net_default_mac"
 configfile "/grub2/grub.cfg-$net_default_mac"
 
-# Relative paths must go after absolute paths because
-# Grub2 in UEFI HTTP messes URL otherwise and won't load
-# the MAC-based menu.
+# The following four statements breaks grub2 and it's no
+# longer able to load any file from the base URL.
+# Comment them out to be able to use (UEFI/iPXE) HTTP Boot:
+# https://bugzilla.redhat.com/show_bug.cgi?id=1763216
 echo "Trying grub2/grub.cfg-$net_default_mac"
 configfile "grub2/grub.cfg-$net_default_mac"
 
