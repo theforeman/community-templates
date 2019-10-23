@@ -64,12 +64,15 @@ class FakeNamespace
     @preseed_server = 'example.com:80'
     @preseed_path = '/bla'
     @nic1 = FakeStruct.new(
+      :mac => '00:00:00:00:00:01',
       :identifier => 'eth0',
       :managed? => true,
       :primary => true,
       :ip => '1.2.3.4',
       :subnet => FakeStruct.new(
         :dhcp_boot_mode? => true,
+        :nic_delay? => nil,
+        :nic_delay => nil,
         :mtu => 1496
       ),
       :tag => '',
@@ -105,14 +108,18 @@ class FakeNamespace
       :as_string => name,
       :subnet => FakeStruct.new(
         :dhcp_boot_mode? => true,
-        :mtu => 1500
+        :mtu => 1500,
+        :nic_delay? => nil,
+        :nic_delay => nil,
       ),
       :mac => '00:00:00:00:00:01',
       :primary_interface => FakeStruct.new(
         :identifier => 'eth0',
         :subnet => FakeStruct.new(
           :dhcp_boot_mode? => true,
-          :mtu => 9000
+          :mtu => 9000,
+          :nic_delay? => nil,
+          :nic_delay => nil,
         ),
       ),
       :provision_interface => @nic1,
@@ -163,6 +170,10 @@ class FakeNamespace
   def indent(_, string)
     string
   end
+
+  def pxe_kernel_options
+    ''
+  end
 end
 
 module TemplatesHelper
@@ -190,10 +201,11 @@ module TemplatesHelper
     [xml_errors.length, '', xml_errors]
   end
 
-  def validate_erb(template, namespace, ksversion)
+  def validate_erb(template, namespace, ksversion, validate = true)
     t = Tempfile.new('community-templates-validate')
     t.write(render_erb(template, namespace))
     t.close
+    return 0, '', '' unless validate
     case namespace.host.operatingsystem.family
     when 'Redhat'
       ksvalidator(ksversion, t.path)
@@ -221,8 +233,8 @@ class TemplateRenderer
     @template = template
   end
 
-  def render(distro, major, minor, distro_prefix)
+  def render(distro, major, minor, distro_prefix, validate = true)
     ns = FakeNamespace.new(@osfamily, distro, major, minor)
-    validate_erb(@template, ns, "#{distro_prefix}#{major}")
+    validate_erb(@template, ns, "#{distro_prefix}#{major}", validate)
   end
 end
