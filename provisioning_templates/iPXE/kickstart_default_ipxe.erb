@@ -15,7 +15,7 @@ oses:
   <% static_arg = 'static=yes' -%>
   <% static = (@host.token.nil? ? '?' : '&') + static_arg -%>
 <% end -%>
-<% if subnet.nic_delay? -%>
+<% if subnet.nic_delay.present? -%>
   <% nic_delay = "linksleep=#{subnet.nic_delay}" -%>
 <% else -%>
   <% nic_delay = '' -%>

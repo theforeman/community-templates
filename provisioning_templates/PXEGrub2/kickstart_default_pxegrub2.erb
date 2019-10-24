@@ -43,7 +43,7 @@ oses:
       }
     end
   end
-  if subnet.nic_delay?
+  if subnet.nic_delay.present?
     options.push("linksleep=#{subnet.nic_delay}")
   end
 
