@@ -20,7 +20,7 @@ set WGET=x:\wimaging\deploy\wget64.exe
 <%= @host.diskLayout %>
 
 echo Started downloading main WIM
-%WGET% <%= proxy_string %> <%= @host.os.medium_uri(@host).to_s %>/sources/install.wim -O C:\install.wim
+%WGET% <%= proxy_string %> <%= medium_uri %>/sources/install.wim -O C:\install.wim
 
 echo Writing install image to partition while downloading additional files
 
@@ -31,10 +31,10 @@ echo Writing install image to partition while downloading additional files
                 del /q /s C:\install.wim"
    start cmd /C "echo Downloading the drivers
                 md c:\drivers
-                %WGET% <%= proxy_string %> -P c:\drivers -r -np -nH --cut-dirs=3 -R index.html -q --level=0 <%= @host.os.medium_uri(@host).to_s %>/drivers/"
+                %WGET% <%= proxy_string %> -P c:\drivers -r -np -nH --cut-dirs=3 -R index.html -q --level=0 <%= medium_uri %>/drivers/"
    start cmd /C "echo Downloading additional updates
                 md c:\updates
-                %WGET% <%= proxy_string %> -P c:\updates\ -r -np -nH --cut-dirs=3 -R index.html -q --level=0 <%= @host.os.medium_uri(@host).to_s %>/updates/"
+                %WGET% <%= proxy_string %> -P c:\updates\ -r -np -nH --cut-dirs=3 -R index.html -q --level=0 <%= medium_uri %>/updates/"
    start cmd /C "echo Downloading finsh script and activating SetupComplete.cmd
                 md c:\deploy
                 %WGET% --no-verbose <%= foreman_url("finish") -%> -O C:\deploy\foreman-finish.bat"
@@ -50,7 +50,7 @@ IF not exist %PantherDirectory% (mkdir %PantherDirectory%)
 echo Finalizing installation...
 
 echo Downloading custom theme
-%WGET%  -P c:\Windows\Web\ -r -np -nH --cut-dirs=3 -R index.html -q --level=0 <%= @host.os.medium_uri(@host).to_s %>/theme/
+%WGET%  -P c:\Windows\Web\ -r -np -nH --cut-dirs=3 -R index.html -q --level=0 <%= medium_uri %>/theme/
 
 echo Stage the Unattend.xml file for dism to apply
 echo Downloading unattend.xml
