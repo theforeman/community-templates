@@ -35,6 +35,14 @@ template_inputs:
   value_type: plain
   options: "yes\r\nno"
   default: "yes"
+- name: Host Parameters
+  required: true
+  input_type: user
+  description: Whether should be Host Parameters included.
+  advanced: false
+  value_type: plain
+  options: "yes\r\nno"
+  default: "no"
 - name: IPv4
   required: true
   input_type: user
@@ -107,7 +115,11 @@ require:
   version: '3.9.0'
 -%>
 <%- content_attrs = input('Content Attributes') == 'yes' %>
-<%- load_hosts(search: input('Hosts'), includes: [:organization, :location, :hostgroup, :host_collections, { interfaces: :subnet }, :content_facet]).each_record do |host| -%>
+<%- interface_includes = [:subnet] %>
+<%- interface_includes.push(:domain) if input('Host Parameters') == 'yes' %>
+<%- includes = [:organization, :location, :hostgroup, :host_collections, { interfaces: interface_includes }, :content_facet] %>
+<%- includes.push(:operatingsystem) if input('Host Parameters') == 'yes' %>
+<%- load_hosts(search: input('Hosts'), includes: includes).each_record do |host| -%>
 <%-   content_facet = host_content_facet(host) if content_attrs -%>
 <%-   content_attribute_data = nil -%>
 <%-   if content_facet -%>
@@ -140,13 +152,14 @@ require:
 }
 -%>
 <%-   end -%>
-<%-   inventory_data = { 'name': host.name }
+<%-   inventory_data = { 'id': host.id, 'name': host.name }
       inventory_data.update('organization': host.organization) if input('Organization') == 'yes'
       inventory_data.update('location': host.location) if input('Location') == 'yes'
       hostgroup = host.hostgroup.title if host.hostgroup
       inventory_data.update('host_group': hostgroup) if input('Host Group') == 'yes'
       host_collections = host.host_collections.map { |c| c.name } if host.host_collections
       inventory_data.update('host_collections': host_collections) if input('Host Collections') == 'yes'
+      inventory_data.update('host_parameters': host.params) if input('Host Parameters') == 'yes'
       inventory_data.update('ipv4': host.ip) if input('IPv4') == 'yes'
       inventory_data.update('ipv6': host.ip6) if input('IPv6') == 'yes'
       inventory_data.update('subnet': host.subnet) if input('Subnet') == 'yes'
