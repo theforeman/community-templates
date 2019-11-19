@@ -163,8 +163,10 @@ yum
 dhclient
 <% if use_ntp -%>
 ntp
+-chrony
 <% else -%>
 chrony
+-ntp
 <% end -%>
 wget
 @Core
