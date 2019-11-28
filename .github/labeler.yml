@@ -1,0 +1,5 @@
+Remote execution:
+  - job_templates/**/*
+Provisioning:
+  - partition_tables_templates/**/*
+  - provisioning_templates/**/*
