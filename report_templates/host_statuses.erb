@@ -12,6 +12,7 @@ template_inputs:
   resource_type: Host
 model: ReportTemplate
 -%>
+<%- report_headers 'Name', 'Global' -%>
 <%- load_hosts(search: input('hosts'), includes: :host_statuses).each_record do |host| -%>
 <%-   report_row({
         'Name': host.name,
