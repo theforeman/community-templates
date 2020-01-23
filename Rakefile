@@ -1,4 +1,6 @@
 require 'rake/testtask'
+$LOAD_PATH << "test"
+require "test_helper"
 
 task :default => :test
 

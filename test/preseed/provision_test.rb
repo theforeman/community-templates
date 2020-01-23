@@ -21,6 +21,7 @@ describe 'preseed_default.erb' do
     releases.each do |major, minor, release|
       describe "#{distro} #{major}.#{minor} #{release}" do
         it 'will compile' do
+          skip("debconf-set-selections not found, use DEBCONFSETSEL to set path to executable") unless @renderer.debian_validator_present?
           code, stdout, stderr = @renderer.render(distro, major, minor, release)
           _(stdout).must_equal ''
           _(stderr).must_equal ''

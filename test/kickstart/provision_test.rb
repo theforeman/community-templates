@@ -9,7 +9,7 @@ describe 'kickstart_default.erb' do
   {
     'Fedora' => {
       prefix: 'F',
-      majors: (15..29),
+      majors: (27..30),
       minor: '',
     },
     'CentOS' => {
@@ -26,6 +26,7 @@ describe 'kickstart_default.erb' do
     options[:majors].each do |major|
       describe "#{distro} #{major}" do
         it 'will compile' do
+          skip("ksvalidator not found, use KSVALIDATOR to set path to executable") unless @renderer.redhat_validator_present?
           code, stdout, stderr = @renderer.render(distro, major, options[:minor], options[:prefix])
           _(stdout).must_equal ''
           _(stderr).must_equal ''
@@ -44,7 +45,7 @@ describe 'kickstart_default_pxelinux.erb' do
   {
     'Fedora' => {
       prefix: 'F',
-      majors: (15..29),
+      majors: (27..30),
       minor: '',
     },
     'CentOS' => {
@@ -61,7 +62,7 @@ describe 'kickstart_default_pxelinux.erb' do
     options[:majors].each do |major|
       describe "#{distro} #{major}" do
         it 'will compile' do
-          code, stdout, stderr = @renderer.render(distro, major, options[:minor], options[:prefix], false)
+          code, stdout, stderr = @renderer.render(distro, major, options[:minor], options[:prefix], nil, false)
           _(stdout).must_equal ''
           _(stderr).must_equal ''
           _(code).must_equal 0

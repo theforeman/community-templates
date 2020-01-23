@@ -5,7 +5,7 @@ class TestAutoyastProvision < Minitest::Test
   include TemplatesHelper
 
   def validate_distro(template, family, name, major, minor)
-    ns = FakeNamespace.new(family, name, major, minor)
+    ns = FakeNamespace.new(family, name, major, minor, nil, :dhcp, :none, nil, "Nic::Managed")
     code, stdout, stderr = validate_erb(template, ns, '')
     assert_empty stdout
     assert_empty stderr
