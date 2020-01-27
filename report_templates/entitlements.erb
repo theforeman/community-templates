@@ -4,7 +4,7 @@ snippet: false
 model: ReportTemplate
 require:
 - plugin: katello
-  version: 3.14.0
+  version: 3.16.0
 -%>
 <%- report_headers 'Name', 'Organization', 'Lifecycle Environment', 'Content View', 'Host Collections', 'Virtual', 'Guest of Host', 'OS', 
 'Arch', 'Sockets', 'RAM', 'Cores', 'SLA', 'Products', 'Subscription Name', 'Subscription Type', 'Subscription Quantity', 
@@ -29,6 +29,7 @@ require:
           'Subscription Name': sub_name(pool),
           'Subscription Type': pool.type,
           'Subscription Quantity': pool.quantity,
+          'Subscriptions Consumed': pool.consumed,
           'Subscription SKU': sub_sku(pool),
           'Subscription Contract': pool.contract_number,
           'Subscription Account': pool.account_number,
