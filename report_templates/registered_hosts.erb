@@ -21,7 +21,7 @@ require:
         'Name': host.name,
         'Ip': host.ip,
         'Operating System': host.operatingsystem,
-        'Subscriptions': host_subscriptions(host),
+        'Subscriptions': host_subscriptions_names(host),
         'Applicable Errata': host_applicable_errata_ids(host),
         'Owner': host.owner,
         'Kernel': host_kernel_release(host),
