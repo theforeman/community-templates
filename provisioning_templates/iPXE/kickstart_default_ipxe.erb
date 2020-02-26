@@ -29,7 +29,7 @@ oses:
 
   options.push("linksleep=#{subnet.nic_delay}") if subnet.nic_delay.present?
 
-  stage2 = host_param('kickstart_liveimg') ? 'inst.stage2=' + medium_uri : ''
+  stage2 = host_param('kickstart_liveimg') ? 'inst.stage2=' + medium_uri.to_s : ''
 
   if (is_fedora && os_major < 17) || (rhel_compatible && os_major < 7)
     options.push('ip=${netX/ip} netmask=${netX/netmask} gateway=${netX/gateway} dns=${dns}')
