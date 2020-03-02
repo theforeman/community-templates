@@ -21,7 +21,7 @@ This template accepts the following parameters:
 - enable-puppetlabs-puppet5-repo: boolean (default=false)
 - enable-puppetlabs-puppet6-repo: boolean (default=false)
 - salt_master: string (default=undef)
-- ntp-server: string (default="0.fedora.pool.ntp.org")
+- ntp-server: string (default=undef)
 - bootloader-append: string (default="nofb quiet splash=quiet")
 - disable-firewall: boolean (default=false)
 - package_upgrade: boolean (default=true)
@@ -264,18 +264,9 @@ exec < /dev/tty3 > /dev/tty3
 <%= snippet_if_exists(template_name + " custom post") %>
 <%= snippet 'kickstart_networking_setup' %>
 
-echo "Updating system time"
-<% if use_ntp -%>
-/usr/sbin/ntpdate -sub <%= host_param('ntp-server') || '0.fedora.pool.ntp.org' %>
-<% else -%>
-/usr/bin/chronyc makestep
-<% end -%>
-/usr/sbin/hwclock --systohc
+<%= snippet 'ntp' %>
 
-<% if proxy_uri -%>
-# Yum proxy
-echo 'proxy = <%= proxy_uri %>' >> /etc/yum.conf
-<% end -%>
+<%= snippet 'yum_proxy' %>
 
 <% if rhel_compatible && !host_param_false?('enable-epel') -%>
 <%= snippet 'epel' -%>
@@ -351,4 +342,3 @@ fi
 
 sync
 <%= section_end -%>
-
