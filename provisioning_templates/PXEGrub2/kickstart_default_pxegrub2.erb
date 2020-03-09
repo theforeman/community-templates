@@ -30,6 +30,7 @@ menuentry '<%= template_name %>' {
   <%= initrdcmd %> <%= @initrd %>
 }
 
+# Workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1811561
 menuentry '<%= template_name %> HTTP Boot' {
   <%= linuxcmd %> /httpboot/<%= @kernel %> ks=<%= foreman_url('provision') %> <%= pxe_kernel_options %> <%= snippet("kickstart_kernel_options").strip %> BOOTIF=01-$net_default_mac
   <%= initrdcmd %> /httpboot/<%= @initrd %>
