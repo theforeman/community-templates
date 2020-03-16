@@ -11,10 +11,10 @@ template_inputs:
 model: ReportTemplate
 require:
 - plugin: katello
-￼ version: 3.9.0
+￼ version: 3.16.0
 -%>
 <%- report_headers 'ID', 'Name', 'Available', 'Quantity', 'SKU', 'Contract number' -%>
-<%- load_pools(search: input('Subscriptions filter'), includes: [:subscription, :products]).each_record do |pool| -%>
+<%- load_pools(search: input('Subscriptions filter'), includes: [:subscription, :products, :organization]).each_record do |pool| -%>
 <%-   report_row(
         'ID': pool.id,
         'Name': pool.name,
@@ -22,6 +22,10 @@ require:
         'Quantity': pool.quantity,
         'SKU': pool.product_id,
         'Contract number': pool.contract_number,
+        'Account number': pool.account_number,
+        'Start date': pool.start_date,
+        'End date': pool.end_date,
+        'Organization': pool.organization.name
       ) -%>
 <%- end -%>
 <%= report_render -%>
