@@ -12,7 +12,7 @@ oses:
   rhel_compatible = @host.operatingsystem.family == 'Redhat' && @host.operatingsystem.name != 'Fedora'
   os_major = @host.operatingsystem.major.to_i
 
-  if (rhel_compatible && os_major < 7) || !@host.pxe_loader.include?('EFI')
+  if (rhel_compatible && os_major < 7) || !@host.pxe_loader_efi?
     # Grub EFI commands are RHEL7+ only (prevents "Kernel is too old") or for non-EFI arch
     linuxcmd = "linux"
     initrdcmd = "initrd"
