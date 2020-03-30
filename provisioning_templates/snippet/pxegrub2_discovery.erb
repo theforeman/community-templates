@@ -19,8 +19,8 @@ if [ ${grub_platform} == "pc" ]; then
     initrd boot/fdi-image/initrd0.img
   }
   menuentry 'Foreman Discovery Image HTTP' --id discovery_http {
-    linux /EFI/BOOT/boot/fdi-image/vmlinuz0 ${common}
-    initrd /EFI/BOOT/boot/fdi-image/initrd0.img
+    linux /httpboot/boot/fdi-image/vmlinuz0 ${common}
+    initrd /httpboot/boot/fdi-image/initrd0.img
   }
 else
   menuentry 'Foreman Discovery Image EFI' --id discovery {
@@ -28,7 +28,7 @@ else
     initrdefi boot/fdi-image/initrd0.img
   }
   menuentry 'Foreman Discovery Image EFI HTTP' --id discovery_http {
-    linuxefi /EFI/BOOT/boot/fdi-image/vmlinuz0 ${common}
-    initrdefi /EFI/BOOT/boot/fdi-image/initrd0.img
+    linuxefi /httpboot/boot/fdi-image/vmlinuz0 ${common}
+    initrdefi /httpboot/boot/fdi-image/initrd0.img
   }
 fi
