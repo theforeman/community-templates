@@ -208,11 +208,7 @@ key --skip
 <% end -%>
 
 text
-<% if @host.respond_to?(:bootdisk_build?) && @host.bootdisk_build? %>
-reboot --eject
-<% else -%>
 reboot
-<% end -%>
 
 %packages
 <%= snippet_if_exists(template_name + " custom packages") %>
@@ -340,6 +336,11 @@ The last post section halts Anaconda to prevent endless loop
 <% else -%>
 %post --erroronfail
 <% end -%>
+
+<% if @host.respond_to?(:bootdisk_build?) && @host.bootdisk_build? %>
+eject -v
+<% end -%>
+
 if test -f /tmp/foreman_built; then
   echo "calling home: build is done!"
   <%= indent(2, skip1: true) { snippet('built', :variables => { :endpoint => 'built', :method => 'POST', :body_file => '/mnt/sysimage/root/install.post.log' }) } -%>
