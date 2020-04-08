@@ -40,7 +40,8 @@ kind: job_template
 
       - name: foreman-maintain upgrade return code is zero
         debug:
-          msg: "Success! Smart Proxy upgrade completed."
+          msg: "Success! Smart Proxy upgrade completed. Current version of Smart Proxy server is {{ ansible_facts.packages['satellite-capsule'][0]['version'] }}."
+
       rescue:
         - name: Print foreman-maintain output
           debug:
