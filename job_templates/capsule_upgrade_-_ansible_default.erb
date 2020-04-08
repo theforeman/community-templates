@@ -1,5 +1,5 @@
 <%#
-name: Smart Proxy Upgrade Playbook
+name: Capsule Upgrade Playbook
 snippet: false
 template_inputs:
 - name: target_version
@@ -34,13 +34,13 @@ kind: job_template
       when: "'satellite' in ansible_facts.packages"
 
     - block:
-      - name: Upgrade Smart Proxy using foreman-maintain
+      - name: Upgrade Capsule server using foreman-maintain
         command: foreman-maintain upgrade run --assumeyes --target-version=<%= input('target_version') %> --whitelist="<%= input('whitelist_options') %>"
         register: result
 
       - name: foreman-maintain upgrade return code is zero
         debug:
-          msg: "Success! Smart Proxy upgrade completed. Current version of Smart Proxy server is {{ ansible_facts.packages['satellite-capsule'][0]['version'] }}."
+          msg: "Success! Capsule server upgrade completed. Current version of Capsule server server is {{ ansible_facts.packages['satellite-capsule'][0]['version'] }}."
 
       rescue:
         - name: Print foreman-maintain output
@@ -49,4 +49,4 @@ kind: job_template
 
         - name: foreman-maintain upgrade return code is non-zero
           fail:
-            msg: "Failed! Smart Proxy upgrade failed. See /var/log/foreman-installer/ in the Smart Proxy server for more information"
+            msg: "Failed! Capsule server upgrade failed. See /var/log/foreman-installer/capsule.log in the Capsule server for more information"
