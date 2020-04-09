@@ -33,6 +33,12 @@ kind: job_template
         msg: "This playbook cannot be executed on a Satellite server. Use only on a Capsule server."
       when: "'satellite' in ansible_facts.packages"
 
+    - name: Install foreman-maintain if not present
+      package:
+        name: rubygem-foreman_maintain
+        state: present
+      when: "'rubygem-foreman_maintain' not in ansible_facts.packages"
+
     - block:
       - name: Upgrade Capsule server using foreman-maintain
         command: foreman-maintain upgrade run --assumeyes --target-version=<%= input('target_version') %> --whitelist="<%= input('whitelist_options') %>"
