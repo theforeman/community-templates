@@ -97,6 +97,7 @@ handle_zypp_res_codes () {
       end
     end
   -%>
+  [ -x "$(command -v subscription-manager)" ] && subscription-manager refresh
   apt-get -y update
   apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y <%= action %> <%= input("package") %>
 <% elsif package_manager == 'zypper' -%>
