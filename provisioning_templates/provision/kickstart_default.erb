@@ -75,7 +75,12 @@ liveimg --url=<%= liveimg_url %> <%= proxy_string %>
 <% else %>
 <%= @mediapath %><%= proxy_string %>
 <% @additional_media.each do |medium| -%>
+<% if rhel_compatible && @host.operatingsystem.name.downcase.include?("centos") && os_major >= 8 && medium[:url] && medium[:url].include?("AppStream") -%>
+# renamed from "<%= medium[:url] %>" for CentOS Anaconda to work
+repo --name AppStream --baseurl <%= medium[:url] %>
+<% else -%>
 repo --name <%= medium[:name] %> --baseurl <%= medium[:url] %> <%= medium[:install] ? ' --install' : '' %><%= proxy_string %>
+<% end -%>
 <% end -%>
 <%= snippet_if_exists(template_name + " custom repositories") %>
 <% end %>
