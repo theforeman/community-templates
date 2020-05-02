@@ -8,7 +8,8 @@ addons:
       - keyboard-configuration
       - python3-pip
 before_install:
-  # ordered-set needs a newer setuptools
+  # ordered-set needs a newer setuptools and wheel
   - pip3 install --user --upgrade setuptools
-  - pip3 install --user ordered-set pykickstart
+  - pip3 install --user wheel
+  - pip3 install --user 'ordered-set <4' pykickstart
   - sed s,/var/cache/debconf/passwords.dat,$HOME/debconf-passwords.dat,g /etc/debconf.conf > $HOME/.debconfrc
