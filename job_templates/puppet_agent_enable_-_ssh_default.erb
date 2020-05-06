@@ -7,4 +7,7 @@ snippet: false
 provider_type: SSH
 kind: job_template
 -%>
+<% if @host.operatingsystem.family == 'Debian' -%>
+export PATH=/opt/puppetlabs/bin:$PATH
+<% end -%>
 puppet agent --enable
