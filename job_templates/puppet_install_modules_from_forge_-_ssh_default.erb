@@ -33,4 +33,7 @@ template_inputs:
 provider_type: SSH
 kind: job_template
 -%>
+<% if @host.operatingsystem.family == 'Debian' -%>
+export PATH=/opt/puppetlabs/bin:$PATH
+<% end -%>
 puppet module install <%= input('puppet_module') %> <%= "--target-dir #{input('target_dir')}" if input('target_dir').present? %> <%= "--version #{input('version')}" if input('version').present? %> <%= "--force" if input('force') == "true" %> <%= "--ignore-dependencies" if input('ignore_dependencies') == "true" %>

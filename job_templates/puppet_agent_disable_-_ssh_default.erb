@@ -13,4 +13,7 @@ template_inputs:
 provider_type: SSH
 kind: job_template
 -%>
+<% if @host.operatingsystem.family == 'Debian' -%>
+export PATH=/opt/puppetlabs/bin:$PATH
+<% end -%>
 puppet agent --disable "<%= input("comment").present? ? input("comment") : "Disabled using Foreman Remote Execution"  %> - <%= current_user %> - $(date "+%d/%m/%Y %H:%M")"
