@@ -23,9 +23,11 @@ else
 fi
 <% end -%>
 
-cat > <%= etc_path %>/minion << EOF
+cat > <%= etc_path %>/minion.d/minion.conf << EOF
 <%= snippet 'saltstack_minion' %>
 EOF
+
+echo <%= @host.name %> > <%= etc_path %>/minion_id
 
 <% if @host.operatingsystem.family == 'Freebsd' -%>
 echo 'salt_minion_enable="YES"' >>/etc/rc.conf
