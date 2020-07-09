@@ -1,3 +1,7 @@
+
+# This Repository is archived and templates are migrated to the relevant repositories. For more information [Click Here](https://community.theforeman.org/t/heads-up-community-templates-repo-will-be-archived-tomorrow/19539).
+
+
 # Community Templates
 
 A place for us to collaborate around templates & snippets for various OSes.
